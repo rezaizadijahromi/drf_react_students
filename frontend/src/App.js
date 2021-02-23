@@ -11,6 +11,7 @@ import ClassRoom from "./components/ClassRoom";
 import NavR from "./components/NavR";
 import Footer from "./components/Footer";
 import ClassDetail from "./components/ClassDetail";
+import CreateClass from "./components/CreateClass";
 
 class App extends Component {
 	constructor(props) {
@@ -42,6 +43,7 @@ class App extends Component {
 				<NavR />
 				<Route path="/" component={ClassRoom} exact />
 				<Route path="/class/:code" component={ClassDetail} />
+				<Route path="/create-class/" component={CreateClass} />
 				<Footer />
 			</Router>
 		);

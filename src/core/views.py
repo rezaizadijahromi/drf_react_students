@@ -10,7 +10,8 @@ from rest_framework.response import Response
 # Files
 from .models import ClassRoom
 from .serializers import (
-    ClassRoomSerializer, DetailClassRoomSerializer
+    ClassRoomSerializer, DetailClassRoomSerializer,
+    CreateClassRoomSerializer
 )
 
 
@@ -36,6 +37,37 @@ class DetailClassRoomView(APIView):
             return Response(
                 {'message':'Invalid class'}, status=status.HTTP_400_BAD_REQUEST
             )
+
+class CreateClassRoomView(generics.CreateAPIView):
+    serializer_class = CreateClassRoomSerializer       
+
+# class CreateClassRoomView(APIView):
+#     serializer_class = CreateClassRoomSerializer
+    
+
+#     def post(self, request, format=None):
+#         serializer = self.serializer_class(data=request.data)
+        
+
+#         if serializer.is_valid():
+#             serializer.create()
+
+#             return Response(serializer.data)
+#         return Response(serializer.data)
+        #     lesson = serializer.data['lesson']['name']
+        #     ostad = serializer.data['ostad']['name']
+        #     image = serializer.data.get('image')
+        #     room = ClassRoom.objects.create(
+        #         ostad=ostad,
+        #         lesson=lesson,
+        #         image=image
+        #     )
+        #     room.save()
+        #     return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
+        # return Response(
+        #     {'message': 'serializer is invalid'},
+        #     status=status.HTTP_400_BAD_REQUEST
+        # )
 
 
 
