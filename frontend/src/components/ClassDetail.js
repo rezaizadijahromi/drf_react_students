@@ -57,7 +57,7 @@ class ClassDetail extends React.Component {
 			})
 			.then((data) => {
 				this.setState({
-					ostad: data.ostad,
+					ostad: data.ostad.name,
 					lessonName: data.lesson.name,
 					day: data.day,
 					image: data.image,

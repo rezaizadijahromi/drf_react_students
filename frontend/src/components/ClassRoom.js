@@ -20,7 +20,7 @@ class ClassRoom extends Component {
 			products: [
 				{
 					code: null,
-					lesson: 'reza',
+					lesson: '',
 					ostad: "",
 					day: 1,
                     image: "",
@@ -89,11 +89,10 @@ class ClassRoom extends Component {
                                 <Card.Title>{product.code}</Card.Title>
                                 <Card.Title>{product.lesson.name}</Card.Title>
                                 <Card.Text>
-                                    {product.ostad}
+                                    {product.ostad.name}
                                 </Card.Text>
 								<Link to={`class/${product.code}`}>
 										<Button >go to class</Button>
-
 								</Link>
                                 </Card.Body>
                             </Card>

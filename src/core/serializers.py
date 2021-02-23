@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ClassRoom, Lesson
+from .models import (ClassRoom, Lesson, Master)
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -10,10 +10,17 @@ class LessonSerializer(serializers.ModelSerializer):
             'name',
         )
 
+class MasterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Master
+        fields = (
+            'name',
+        )
+
+
 class ClassRoomSerializer(serializers.ModelSerializer):
-    # lesson = serializers.SerializerMethodField()
-    # lesson = serializers.CharField()
-    lesson = LessonSerializer(read_only=True)
+    lesson = LessonSerializer()
+    ostad = MasterSerializer()
 
     class Meta:
         model = ClassRoom
@@ -27,7 +34,9 @@ class ClassRoomSerializer(serializers.ModelSerializer):
         #     return LessonSerializer(obj.lesson).data
 
 class DetailClassRoomSerializer(serializers.ModelSerializer):
-    lesson = LessonSerializer(read_only=True)
+    lesson = LessonSerializer()
+    ostad = MasterSerializer()
+
     
     class Meta:
         model = ClassRoom
@@ -36,7 +45,4 @@ class DetailClassRoomSerializer(serializers.ModelSerializer):
             'ostad', 'lesson',
             'slug', 'deadline', 'day'
         )
-
-    # def get_lesson_name(self, obj):
-    #     return LessonSerializer(obj.lesson_name).data
 
