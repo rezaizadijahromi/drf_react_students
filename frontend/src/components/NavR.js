@@ -15,9 +15,12 @@ const NavR = () => {
 			<Navbar.Toggle aria-controls="responsive-navbar-nav" />
 			<Navbar.Collapse id="responsive-navbar-nav">
 				<Nav className="mr-auto">
-					<Link>
-						<Nav.Link href="#features">Create Class</Nav.Link>
-					</Link>
+
+
+						<Nav.Link href="/create-class">Create Class</Nav.Link>
+
+
+
 					<Nav.Link href="#pricing">Pricing</Nav.Link>
 					<NavDropdown title="Dropdown" id="collasible-nav-dropdown">
 						<NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

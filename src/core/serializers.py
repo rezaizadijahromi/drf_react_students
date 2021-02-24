@@ -65,16 +65,22 @@ class CreateClassRoomSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'code',
         ) 
-    def create(self, validated_data):
-        room = ClassRoom.objects.create(
-            ostad=validated_data['ostad'],
-            lesson=validated_data['lesson'],
-            image=validated_data['image'],
-            day=validated_data['day']
-        )
 
-        return room
 
+
+    # def create(self, validated_data):
+    #     room = ClassRoom.objects.create(
+    #         ostad=validated_data['ostad'],
+    #         lesson=validated_data['lesson'],
+    #         image=validated_data['image'],
+    #         day=validated_data['day']
+    #     )
+
+    #     return room
+
+    # def create(self, validated_data):
+
+    #     return get_user_model().objects.create_user(**validated_data)
         
     # def get_ostad(self, obj):
     #     return MasterSerializer(obj.name).data

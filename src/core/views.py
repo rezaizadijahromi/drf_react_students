@@ -39,37 +39,44 @@ class DetailClassRoomView(APIView):
             )
 
 class CreateClassRoomView(generics.CreateAPIView):
-    serializer_class = CreateClassRoomSerializer       
+    serializer_class = CreateClassRoomSerializer    
+
+    def perform_create(self, serializer):
+        return serializer.save(ostad=self.request.GET.get('ostad'),
+        lesson=self.request.GET.get('lesson'),
+        image=self.request.GET.get('image'),
+        day=self.request.GET.get('day')
+        )  
 
 # class CreateClassRoomView(APIView):
 #     serializer_class = CreateClassRoomSerializer
-    
+
 
 #     def post(self, request, format=None):
 #         serializer = self.serializer_class(data=request.data)
         
 
 #         if serializer.is_valid():
-#             serializer.create()
 
-#             return Response(serializer.data)
-#         return Response(serializer.data)
-        #     lesson = serializer.data['lesson']['name']
-        #     ostad = serializer.data['ostad']['name']
-        #     image = serializer.data.get('image')
-        #     room = ClassRoom.objects.create(
-        #         ostad=ostad,
-        #         lesson=lesson,
-        #         image=image
-        #     )
-        #     room.save()
-        #     return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
-        # return Response(
-        #     {'message': 'serializer is invalid'},
-        #     status=status.HTTP_400_BAD_REQUEST
-        # )
+#             ostad = request.GET.get('ostad')
+#             lesson = request.GET.get('lesson')
+#             image = serializer.data.get('image')
+#             room = ClassRoom.objects.create(
+#                 ostad=ostad,
+#                 lesson=lesson,
+#                 image=image
+#             )
+#             room.save()
+#             return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
+#         return Response(
+#             {'message': 'serializer is invalid'},
+#             status=status.HTTP_400_BAD_REQUEST
+#         )
 
+#     serializer.create()
 
+#     return Response(serializer.data)
+# return Response(serializer.data)
 
 
 # class BookList(generics.ListAPIView):

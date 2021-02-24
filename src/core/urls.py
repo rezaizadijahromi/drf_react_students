@@ -9,7 +9,7 @@ app_name = 'core'
 urlpatterns = [
     path('', views.ClassRoomView.as_view()),
     path('class/', views.DetailClassRoomView.as_view()),
-    path('create-class/', views.CreateClassRoomView.as_view()),
+    path('create-class', views.CreateClassRoomView.as_view()),
 ]
 
 

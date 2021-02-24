@@ -41,9 +41,11 @@ class App extends Component {
 		return (
 			<Router>
 				<NavR />
+				<Switch>
 				<Route path="/" component={ClassRoom} exact />
+				<Route path="/create-class" component={CreateClass} />
 				<Route path="/class/:code" component={ClassDetail} />
-				<Route path="/create-class/" component={CreateClass} />
+				</Switch>
 				<Footer />
 			</Router>
 		);
