@@ -37,6 +37,9 @@ class CreateClass extends Component {
 
 		this.handelSubmit = this.handelSubmit.bind(this);
 		this.handelChange = this.handelChange.bind(this);
+        this.handelDay = this.handelDay.bind(this)
+        this.handelLesson = this.handelLesson.bind(this)
+        this.handelOstad = this.handelOstad.bind(this)
 	}
 
 	componentDidMount() {
@@ -85,6 +88,33 @@ class CreateClass extends Component {
 		});
 	}
 
+    handelOstad(e){
+        this.setState({
+            products:{
+                ...this.state.products,
+                ostad: e.target.value
+            }
+        })
+    }
+
+    handelLesson(e){
+        this.setState({
+            products:{
+                ...this.state.products,
+                lesson: e.target.value
+            }
+        })
+    }
+
+    handelDay(e){
+        this.setState({
+            products:{
+                ...this.state.products,
+                day: e.target.value
+            }
+        })
+    }
+
 	handelSubmit(e) {
 		e.preventDefault();
 		console.log("Here bitches", this.state.products);
@@ -119,7 +149,6 @@ class CreateClass extends Component {
 
 	render() {
 		var pro = this.state.items;
-		console.log("pro", pro);
 		return (
 			<Form onSubmit={this.handelSubmit}>
 				<Form.Group>
@@ -127,7 +156,7 @@ class CreateClass extends Component {
 
 					<Form.Control
 						as="select"
-						onChange={this.handelChange}
+						onChange={this.handelOstad}
 						value={this.state.products.ostad.name}
 					>
 						{pro.map(function (master, index) {
@@ -142,7 +171,7 @@ class CreateClass extends Component {
 
 					<Form.Control
 						as="select"
-						onChange={this.handelChange}
+						onChange={this.handelLesson}
 						value={this.state.products.lesson}
 					>
 						{pro.map(function (lesson, index) {
@@ -163,7 +192,7 @@ class CreateClass extends Component {
 					<Form.Control
 						type="text"
 						placeholder="day"
-						onChange={this.handelChange}
+						onChange={this.handelDay}
 						value={this.state.products.day}
 					/>
 					<Button type="submit" onSubmit={this.handelSubmit}>submit</Button>
