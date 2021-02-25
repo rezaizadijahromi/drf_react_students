@@ -4,6 +4,7 @@ from django.db.models.signals import post_save, pre_save
 import string
 import random
 from datetime import datetime, timedelta
+from django.contrib.auth.models import User
 
 def generate_unique_code():
     length = 6
@@ -16,6 +17,7 @@ def generate_unique_code():
 
 
 class ClassRoom(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
     image = models.ImageField(
         blank=True, null=True,

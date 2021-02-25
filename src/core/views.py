@@ -8,16 +8,25 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # Files
-from .models import ClassRoom
+from .models import ClassRoom, Master, Lesson
 from .serializers import (
     ClassRoomSerializer, DetailClassRoomSerializer,
-    CreateClassRoomSerializer
+    CreateClassRoomSerializer, MasterSerializer,
+    LessonSerializer
 )
 
 
 class ClassRoomView(generics.ListAPIView):
     queryset = ClassRoom.objects.all()
     serializer_class = ClassRoomSerializer
+
+class MasterView(generics.ListAPIView):
+    queryset = Master.objects.all()
+    serializer_class = MasterSerializer
+
+class LessonView(generics.ListAPIView):
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
 
 class DetailClassRoomView(APIView):
     serializer_class = DetailClassRoomSerializer,
@@ -39,14 +48,36 @@ class DetailClassRoomView(APIView):
             )
 
 class CreateClassRoomView(generics.CreateAPIView):
-    serializer_class = CreateClassRoomSerializer    
+    serializer_class = CreateClassRoomSerializer   
+
 
     def perform_create(self, serializer):
-        return serializer.save(ostad=self.request.GET.get('ostad'),
-        lesson=self.request.GET.get('lesson'),
-        image=self.request.GET.get('image'),
-        day=self.request.GET.get('day')
-        )  
+        serializer = self.serializer_class(data=self.request.data)
+        if serializer.is_valid():
+            print(serializer)
+            ostad = serializer.data['ostad']['name']
+            lesson = serializer.data['lesson']['name']
+            day = serializer.data.get('day')
+
+            lesson_obj = Lesson.objects.get(id=lesson)
+            master_obj = Master.objects.get(id=ostad)
+
+
+
+            room = ClassRoom.objects.create(
+                ostad=master_obj,
+                lesson=lesson_obj,
+                day=day
+            )
+            room.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {
+                    'message': "This is problem"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 # class CreateClassRoomView(APIView):
 #     serializer_class = CreateClassRoomSerializer
