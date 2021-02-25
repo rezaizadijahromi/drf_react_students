@@ -1,22 +1,13 @@
-import React, { componentDidMount, Component } from "react";
+import React, { Component } from "react";
 import {
 	BrowserRouter as Router,
-	Switch,
 	Route,
 	Link,
 	Redirect,
 } from "react-router-dom";
 
 import ReactBootstrap from "react-bootstrap";
-import {
-	CardDeck,
-	Card,
-	Form,
-	CardColumns,
-	Container,
-	Row,
-	Col,
-} from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -24,47 +15,80 @@ class CreateClass extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			lesson: [{
-				name: ""
-			}],
-			master: [{
-				name: ""
-			}],
-			day: 1
-
+			items: [],
+			lesson: [
+				{
+					name: "",
+				},
+			],
+			master: [
+				{
+					name: "",
+				},
+			],
+			day: 1,
+			products: {
+				id: null,
+				lesson: {
+					name: "",
+				},
+				master: {
+					name: "",
+				},
+				day: 0,
+			},
 		};
 
-		// this.handelDay = this.handelDay.bind(this);
-		// this.handelLesson = this.handelLesson.bind(this);
-		// this.handelOstad = this.handelOstad.bind(this);
-		this.getMaster = this.getMaster.bind(this)
-		this.getLesson = this.getLesson.bind(this)
+		this.handelDay = this.handelDay.bind(this);
+		this.handelLesson = this.handelLesson.bind(this);
+		this.handelOstad = this.handelOstad.bind(this);
+		this.getMaster = this.getMaster.bind(this);
+		this.getLesson = this.getLesson.bind(this);
+		this.fetchData = this.fetchData.bind(this);
+		this.handelCreate = this.handelCreate.bind(this);
 		this.handelRoomButtonPressed = this.handelRoomButtonPressed.bind(this);
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getMaster();
 		this.getLesson();
+		this.fetchData();
 	}
 
-	getMaster(){
+	getMaster() {
 		fetch("http://127.0.0.1:8000/api/master/")
-		.then((res) => res.json())
-		.then((data) =>{
-			this.setState({
-				master: data
-			})
-		})
+			.then((res) => res.json())
+			.then((data) => {
+				this.setState({
+					master: data,
+				});
+			});
 	}
 
-	getLesson(){
+	getLesson() {
 		fetch("http://127.0.0.1:8000/api/lesson/")
-		.then((res) => res.json())
-		.then((data) =>{
-			this.setState({
-				lesson: data
+			.then((res) => res.json())
+			.then((data) => {
+				this.setState({
+					lesson: data,
+				});
+			});
+	}
+
+	fetchData() {
+		console.log("fetchiing");
+		var url = "http://127.0.0.1:8000/api/";
+		fetch(url)
+			.then((res) => res.json())
+			.then((data) => {
+				this.setState({
+					items: data,
+				});
 			})
-		})
+			.catch((err) => {
+				// Do something for an error here
+				console.log("Error Reading data " + err);
+			});
 	}
 
 	getCookie(name) {
@@ -83,62 +107,101 @@ class CreateClass extends Component {
 		return cookieValue;
 	}
 
-	// handelOstad(e) {
-	// 	this.setState({
-	// 		products: {
-	// 			...this.state.products,
-	// 			ostad: e.target.value,
-	// 		},
-	// 	});
-	// }
+	handelOstad(e) {
+		this.setState({
+			products: {
+				...this.state.products,
+				master: e.target.value,
+			},
+		});
+	}
 
-	// handelLesson(e) {
-	// 	this.setState({
-	// 		products: {
-	// 			...this.state.products,
-	// 			lesson: e.target.value,
-	// 		},
-	// 	});
-	// }
+	handelLesson(e) {
+		this.setState({
+			products: {
+				...this.state.products,
+				lesson: e.target.value,
+			},
+		});
+	}
 
-	// handelDay(e) {
-	// 	this.setState({
-	// 		products: {
-	// 			...this.state.products,
-	// 			day: e.target.value,
-	// 		},
-	// 	});
-	// }
+	handelDay(e) {
+		// console.log("day", e.target.name);
+		this.setState({
+			products: {
+				...this.state.products,
+				day: e.target.value,
+			},
+		});
+	}
 
-	handelRoomButtonPressed() {
-		// console.log(this.state)
-		console.log("Here bitches", this.state.products);
+	handelRoomButtonPressed(e) {
+		console.log("item", this.state.products);
+		e.preventDefault();
 		var csrftoken = this.getCookie("csrftoken");
+
+		var url = "http://127.0.0.1:8000/api/create-class";
+		try {
+			fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-type": "application/json",
+					"X-CSRFToken": csrftoken,
+				},
+				body: JSON.stringify(this.state.products),
+			})
+				.then((res) => {
+					this.fetchData();
+					this.setState({
+						products: {
+							id: null,
+							lesson: {
+								name: "",
+							},
+							master: {
+								name: "",
+							},
+							day: 0,
+						},
+					});
+				})
+				.then((data) => console.log(data));
+		} catch (error) {
+			console.log("catch");
+		}
+	}
+
+	handelCreate(e) {
+		console.log("item bad", this.state.products);
+		e.preventDefault();
+		var csrftoken = this.getCookie("csrftoken");
+
 		var url = "http://127.0.0.1:8000/api/create-class";
 
 		fetch(url, {
 			method: "POST",
-			headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+			headers: {
+				"Content-type": "application/json",
+				"X-CSRFToken": csrftoken,
+			},
 			body: JSON.stringify(this.state.products),
-		})
-			.then((res) => {
-				res.json();
-			})
-			.catch(function (err) {
-				console.log("Error", err);
-			});
+		}).then((res) => {
+			res.json();
+			this.fetchData();
+		});
 	}
 
 	render() {
+		// console.log("pros", this.state.products);
 		return (
-			<Form onSubmit={this.handelRoomButtonPressed}>
+			<Form onSubmit={this.handelCreate}>
 				<Form.Group>
 					<Form.Label>Ostad</Form.Label>
 
 					<Form.Control
 						as="select"
 						onChange={this.handelOstad}
-						// value={this.state.products.ostad.name}
+						value={this.state.products.master.name}
 					>
 						{this.state.master.map(function (master, index) {
 							return <option key={index}>{master.name}</option>;
@@ -153,7 +216,7 @@ class CreateClass extends Component {
 					<Form.Control
 						as="select"
 						onChange={this.handelLesson}
-						// value={this.state.products.lesson}
+						value={this.state.products.lesson.name}
 					>
 						{this.state.lesson.map(function (lesson, index) {
 							return <option key={index}>{lesson.name}</option>;
@@ -173,12 +236,10 @@ class CreateClass extends Component {
 					<Form.Control
 						type="text"
 						placeholder="day"
-						// onChange={this.handelDay}
-						// value={this.state.products.day}
+						onChange={this.handelDay}
+						value={this.state.products.day}
 					/>
-					<Button type="submit" onSubmit={this.handelRoomButtonPressed}>
-						submit
-					</Button>
+					<Button onSubmit={this.handelCreate } type="submit">submit</Button>
 				</Form.Group>
 			</Form>
 		);
@@ -186,6 +247,12 @@ class CreateClass extends Component {
 }
 
 export default CreateClass;
+
+// {
+// 	lesson: this.state.products.lesson.name,
+// 	ostad: this.state.products.master.name,
+// 	day: this.state.day,
+// }
 
 // handelSubmit(e) {
 // 	e.preventDefault();

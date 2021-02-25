@@ -36,8 +36,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
             'slug', 'deadline', 'day'
         )
 
-        # def get_lesson(self, obj):
-        #     return LessonSerializer(obj.lesson).data
+       
 
 class DetailClassRoomSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer()
@@ -55,23 +54,24 @@ class DetailClassRoomSerializer(serializers.ModelSerializer):
 class CreateClassRoomSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer(many=False)
     ostad = MasterSerializer(many=False)
-    # ostad = serializers.StringRelatedField()
-    # lesson = serializers.StringRelatedField()
-    # ostad = serializers.PrimaryKeyRelatedField(queryset=Master.objects.all(), required=True)
-    # lesson = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all(), required=True)
 
 
     class Meta:
         model = ClassRoom
         fields = (
-            
+            'code',
             'ostad', 'lesson',
             'day',
         )
+        read_only_fields = ('code',)
      
 
 
 
+    # ostad = serializers.StringRelatedField()
+    # lesson = serializers.StringRelatedField()
+    # ostad = serializers.PrimaryKeyRelatedField(queryset=Master.objects.all(), required=True)
+    # lesson = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all(), required=True)
     # def create(self, validated_data):
     #     room = ClassRoom.objects.create(
     #         ostad=validated_data['ostad'],

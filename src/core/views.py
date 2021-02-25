@@ -47,20 +47,52 @@ class DetailClassRoomView(APIView):
                 {'message':'Invalid class'}, status=status.HTTP_400_BAD_REQUEST
             )
 
-class CreateClassRoomView(generics.CreateAPIView):
-    serializer_class = CreateClassRoomSerializer   
+# class CreateClassRoomView(generics.CreateAPIView):
+#     serializer_class = CreateClassRoomSerializer   
 
 
-    def perform_create(self, serializer):
-        serializer = self.serializer_class(data=self.request.data)
+#     def perform_create(self, serializer):
+#         serializer = self.serializer_class(data=self.request.data)
+#         if serializer.is_valid():
+#             print(serializer)
+#             ostad = serializer.data['ostad']['name']
+#             lesson = serializer.data['lesson']['name']
+#             day = serializer.data.get('day')
+
+#             lesson_obj = Lesson.objects.get(name=lesson)
+#             master_obj = Master.objects.get(name=ostad)
+
+
+
+#             room = ClassRoom.objects.create(
+#                 ostad=master_obj,
+#                 lesson=lesson_obj,
+#                 day=day
+#             )
+#             room.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(
+#                 {
+#                     'message': "This is problem"
+#                 },
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+class CreateClassRoomView(APIView):
+    serializer_class = CreateClassRoomSerializer
+
+
+    def post(self, request, format=None):
+
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            print(serializer)
-            ostad = serializer.data['ostad']['name']
-            lesson = serializer.data['lesson']['name']
-            day = serializer.data.get('day')
+            ostad = request.data['ostad.name']
+            lesson = request.data['lesson.name']
+            day = request.data.get('day')
 
-            lesson_obj = Lesson.objects.get(id=lesson)
-            master_obj = Master.objects.get(id=ostad)
+            lesson_obj = Lesson.objects.get(name=lesson)
+            master_obj = Master.objects.get(name=ostad)
 
 
 
@@ -70,7 +102,7 @@ class CreateClassRoomView(generics.CreateAPIView):
                 day=day
             )
             room.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
         else:
             return Response(
                 {
@@ -79,35 +111,6 @@ class CreateClassRoomView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-# class CreateClassRoomView(APIView):
-#     serializer_class = CreateClassRoomSerializer
-
-
-#     def post(self, request, format=None):
-#         serializer = self.serializer_class(data=request.data)
-        
-
-#         if serializer.is_valid():
-
-#             ostad = request.GET.get('ostad')
-#             lesson = request.GET.get('lesson')
-#             image = serializer.data.get('image')
-#             room = ClassRoom.objects.create(
-#                 ostad=ostad,
-#                 lesson=lesson,
-#                 image=image
-#             )
-#             room.save()
-#             return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
-#         return Response(
-#             {'message': 'serializer is invalid'},
-#             status=status.HTTP_400_BAD_REQUEST
-#         )
-
-#     serializer.create()
-
-#     return Response(serializer.data)
-# return Response(serializer.data)
 
 
 # class BookList(generics.ListAPIView):
