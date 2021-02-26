@@ -4,7 +4,10 @@ from django.db.models.signals import post_save, pre_save
 import string
 import random
 from datetime import datetime, timedelta
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 def generate_unique_code():
     length = 6
@@ -17,7 +20,7 @@ def generate_unique_code():
 
 
 class ClassRoom(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
     image = models.ImageField(
         blank=True, null=True,
@@ -37,7 +40,7 @@ class ClassRoom(models.Model):
 
 
     def __str__(self):
-        return self.code
+        return str(self.code)
 
 
 def pre_save_slug_ref_code(sender, instance, *args, **kwargs):
@@ -66,12 +69,16 @@ class Master(models.Model):
         return self.name
 
 class Answer(models.Model):
-    # username = models.ForeignKey(User, on_delete=models.CASCADE)
+    # username = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True, null=True)
     description = models.TextField()
-    image_answer = models.ImageField(upload_to='answers/')
+    image = models.ImageField(blank=True, null=True,
+        upload_to="answers/")
     question = models.ForeignKey('ClassRoom', on_delete=models.CASCADE)
     # liked = models.ManyToManyField(
     #     User, related_name='liked',
     #     blank=True
     # )
+
+    def __str__(self):
+        return self.description
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import (ClassRoom, Lesson, Master)
+from .models import (ClassRoom, Lesson, Master, Answer)
 
 
 
@@ -30,9 +30,9 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassRoom
         fields = (
-            'id','user',
+            'id',
             'code','image',
-            'ostad', 'lesson',
+            'ostad', 'lesson','answers',
             'slug', 'deadline', 'day'
         )
 
@@ -47,7 +47,7 @@ class DetailClassRoomSerializer(serializers.ModelSerializer):
         model = ClassRoom
         fields = (
             'code','image',
-            'ostad', 'lesson',
+            'ostad', 'lesson','answers',
             'slug', 'deadline', 'day'
         )
 
@@ -59,12 +59,29 @@ class CreateClassRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassRoom
         fields = (
-            'code',
+            'code', 
             'ostad', 'lesson',
+            'image',
             'day',
         )
         read_only_fields = ('code',)
      
+
+class CreateAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = (
+            'description', 'image',
+        )
+
+
+        def create(self, validated_data):
+            answer = Answer.objects.create(
+                description=validated_data['description'],
+                image=validated_data['image'],
+            )
+
+            return answer
 
 
 
