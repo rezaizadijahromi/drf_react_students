@@ -113,7 +113,48 @@ class CreateAnswerView(APIView):
         else:
             return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
 
+class CreateLessonView(APIView):
+    serializer_class = LessonSerializer
 
+    def get(self, request, format=None):
+        queryset = Lesson.objects.all()
+        serializer = LessonSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+
+            lesson = Lesson.objects.create(
+                name=serializer.data.get('name')
+            )
+
+            lesson.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'there is an error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateMasterView(APIView):
+    serializer_class = MasterSerializer
+
+    def get(self, request, format=None):
+        queryset = Master.objects.all()
+        serializer = MasterSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+
+            master = Master.objects.create(
+                name=serializer.data.get('name')
+            )
+
+            master.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'there is an error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class CreateClassRoomView(generics.CreateAPIView):
