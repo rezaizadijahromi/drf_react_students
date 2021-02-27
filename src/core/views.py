@@ -10,6 +10,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser, FileUploadParser, MultiPartParser, FormParser
 
 # Files
 from .models import ClassRoom, Master, Lesson, Answer
@@ -58,18 +59,27 @@ class CreateClassRoomView(APIView):
 
 
     def post(self, request, format=None):
-
+        parser_classes = [MultiPartParser, FormParser]
         serializer = self.serializer_class(data=request.data)
         print(serializer)
+        print(request.data)
 
         if serializer.is_valid():
-            ostad = request.data['ostad.name']
-            lesson = request.data['lesson.name']
-            image = request.data['image']
-            day = request.data.get('day')
+            ostad = serializer.data.get('ostad')
+            lesson = serializer.data.get('lesson')
+            image = serializer.FILES['image']
+            day = serializer.data.get('day')
 
-            lesson_obj = Lesson.objects.get(name=lesson)
-            master_obj = Master.objects.get(name=ostad)
+
+            print('---lesson---')
+            print('---lesson---')
+            print(lesson)
+            print(ostad)
+            # print(image)
+            print('---lesson---')
+            print('---lesson---')
+            master_obj = Master.objects.get(name=ostad['name'])
+            lesson_obj = Lesson.objects.get(name=lesson['name'])
 
             room = ClassRoom.objects.create(
                 ostad=master_obj,
@@ -80,11 +90,12 @@ class CreateClassRoomView(APIView):
             room.save()
             return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
         else:
+            print("Problem")
             return Response(
                 {
                     'message': "This is problem"
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_404_NOT_FOUND
             )
 
 class CreateAnswerView(APIView):
@@ -145,6 +156,8 @@ class CreateMasterView(APIView):
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
+        print(serializer)
+
         if serializer.is_valid():
 
             master = Master.objects.create(
@@ -154,7 +167,7 @@ class CreateMasterView(APIView):
             master.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'there is an error'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'there is an error'}, status=status.HTTP_404_NOT_FOUND)
 
 
 # class CreateClassRoomView(generics.CreateAPIView):

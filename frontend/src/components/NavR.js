@@ -18,10 +18,10 @@ const NavR = () => {
 
 
 						<Nav.Link href="/create-class">Create Class</Nav.Link>
+						<Nav.Link href="/create-master">Create Master</Nav.Link>
 
 
 
-					<Nav.Link href="#pricing">Pricing</Nav.Link>
 					<NavDropdown title="Dropdown" id="collasible-nav-dropdown">
 						<NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
 						<NavDropdown.Item href="#action/3.2">

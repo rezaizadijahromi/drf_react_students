@@ -35,17 +35,18 @@ class CreateClass extends Component {
 				master: {
 					name: "",
 				},
+				image: null,
 				day: 0,
 			},
 		};
 
 		this.handelDay = this.handelDay.bind(this);
+		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handelLesson = this.handelLesson.bind(this);
 		this.handelOstad = this.handelOstad.bind(this);
 		this.getMaster = this.getMaster.bind(this);
 		this.getLesson = this.getLesson.bind(this);
 		this.fetchData = this.fetchData.bind(this);
-		this.handelCreate = this.handelCreate.bind(this);
 		this.handelRoomButtonPressed = this.handelRoomButtonPressed.bind(this);
 	}
 
@@ -125,6 +126,16 @@ class CreateClass extends Component {
 		});
 	}
 
+	handleInputChange(e) {
+		e.preventDefault();
+		this.setState({
+			products: {
+				...this.state.products,
+				image: e.target.files[0],
+			},
+		});
+	}
+
 	handelDay(e) {
 		// console.log("day", e.target.name);
 		this.setState({
@@ -139,31 +150,32 @@ class CreateClass extends Component {
 		console.log("item", this.state.products);
 		e.preventDefault();
 		var csrftoken = this.getCookie("csrftoken");
+		let data = new FormData(); // creates a new FormData object
 
-		var url = "http://127.0.0.1:8000/api/create-class";
+		data.append("image", this.state.products.image);
+		console.log("image", this.state.products.image);
+
+		var url = "http://127.0.0.1:8000/api/create-class/";
 		try {
 			fetch(url, {
 				method: "POST",
 				headers: {
 					"Content-type": "application/json",
-					"X-CSRFToken": csrftoken,
 				},
-				body: JSON.stringify(this.state.products),
+				body: JSON.stringify({
+					lesson: {
+						name: this.state.products.lesson,
+					},
+					ostad: {
+						name: this.state.products.master,
+					},
+					image: this.state.products.image,
+					day: this.state.products.day,
+				}),
 			})
 				.then((res) => {
+					res.json();
 					this.fetchData();
-					this.setState({
-						products: {
-							id: null,
-							lesson: {
-								name: "",
-							},
-							master: {
-								name: "",
-							},
-							day: 0,
-						},
-					});
 				})
 				.then((data) => console.log(data));
 		} catch (error) {
@@ -171,30 +183,10 @@ class CreateClass extends Component {
 		}
 	}
 
-	handelCreate(e) {
-		console.log("item bad", this.state.products);
-		e.preventDefault();
-		var csrftoken = this.getCookie("csrftoken");
-
-		var url = "http://127.0.0.1:8000/api/create-class";
-
-		fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-type": "application/json",
-				"X-CSRFToken": csrftoken,
-			},
-			body: JSON.stringify(this.state.products),
-		}).then((res) => {
-			res.json();
-			this.fetchData();
-		});
-	}
-
 	render() {
 		// console.log("pros", this.state.products);
 		return (
-			<Form onSubmit={this.handelCreate}>
+			<Form onSubmit={this.handelRoomButtonPressed}>
 				<Form.Group>
 					<Form.Label>Ostad</Form.Label>
 
@@ -225,12 +217,11 @@ class CreateClass extends Component {
 				</Form.Group>
 
 				<br />
-				{/* <Form.Group>
-
-					<Form.File id="exampleFormControlFile1" label="image file "  onChange={this.handelChange}/>
+				<Form.Group>
+					<input type="file" name="image" onChange={this.handleInputChange} />
 				</Form.Group>
 
-					<br /> */}
+				<br />
 				<Form.Group>
 					<Form.Label>days</Form.Label>
 					<Form.Control
@@ -239,7 +230,9 @@ class CreateClass extends Component {
 						onChange={this.handelDay}
 						value={this.state.products.day}
 					/>
-					<Button onSubmit={this.handelCreate } type="submit">submit</Button>
+					<Button onSubmit={this.handelRoomButtonPressed} type="submit">
+						submit
+					</Button>
 				</Form.Group>
 			</Form>
 		);
