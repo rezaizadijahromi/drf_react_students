@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import {
 	BrowserRouter as Router,
 	Route,
@@ -48,6 +49,9 @@ class CreateClass extends Component {
 		this.getLesson = this.getLesson.bind(this);
 		this.fetchData = this.fetchData.bind(this);
 		this.handelRoomButtonPressed = this.handelRoomButtonPressed.bind(this);
+		// this.handelRoomButtonPressedAXIOS = this.handelRoomButtonPressedAXIOS.bind(
+		// 	this
+		// );
 	}
 
 	componentDidMount() {
@@ -149,11 +153,9 @@ class CreateClass extends Component {
 	handelRoomButtonPressed(e) {
 		console.log("item", this.state.products);
 		e.preventDefault();
-		var csrftoken = this.getCookie("csrftoken");
-		let data = new FormData(); // creates a new FormData object
-
+		let data = new FormData()
 		data.append("image", this.state.products.image);
-		console.log("image", this.state.products.image);
+		console.log("image", data);
 
 		var url = "http://127.0.0.1:8000/api/create-class/";
 		try {
@@ -169,7 +171,6 @@ class CreateClass extends Component {
 					ostad: {
 						name: this.state.products.master,
 					},
-					image: this.state.products.image,
 					day: this.state.products.day,
 				}),
 			})
@@ -182,6 +183,23 @@ class CreateClass extends Component {
 			console.log("catch");
 		}
 	}
+
+	// handelRoomButtonPressedAXIOS(e) {
+	// 	console.log("item", this.state.products);
+	// 	e.preventDefault();
+	// 	const config = { headers: { "Content-Type": "multipart/form-data" } };
+	// 	const url = "http://127.0.0.1:8000/api/create-class/";
+	// 	let data = new FormData();
+	// 	data.append(ostad:{name}, this.state.products.master.name);
+	// 	data.append("lesson", this.state.products.lesson.name);
+	// 	data.append("image", this.state.products.image);
+	// 	data.append("day", this.state.products.day);
+
+	// 	console.log(data);
+	// 	axios.post(url, data, config).then((res) => {
+	// 		console.log(res.data);
+	// 	});
+	// }
 
 	render() {
 		// console.log("pros", this.state.products);

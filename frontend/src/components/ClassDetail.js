@@ -45,7 +45,7 @@ class ClassDetail extends React.Component {
 
 	getClassDetails() {
 		var csrftoken = this.getCookie('csrftoken')
-		return fetch("http://127.0.0.1:8000/api/class" + "?code=" +  this.code, {
+		return fetch("http://127.0.0.1:8000/api/class/" +  this.code, {
 			headers : { 
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',

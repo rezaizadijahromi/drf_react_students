@@ -62,12 +62,13 @@ class CreateClassRoomView(APIView):
         parser_classes = [MultiPartParser, FormParser]
         serializer = self.serializer_class(data=request.data)
         print(serializer)
+        print("request")
         print(request.data)
 
         if serializer.is_valid():
             ostad = serializer.data.get('ostad')
             lesson = serializer.data.get('lesson')
-            image = serializer.FILES['image']
+            image = request.FILES.get('image')
             day = serializer.data.get('day')
 
 
@@ -75,7 +76,7 @@ class CreateClassRoomView(APIView):
             print('---lesson---')
             print(lesson)
             print(ostad)
-            # print(image)
+            print(image)
             print('---lesson---')
             print('---lesson---')
             master_obj = Master.objects.get(name=ostad['name'])
