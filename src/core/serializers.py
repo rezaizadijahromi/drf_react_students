@@ -23,9 +23,20 @@ class MasterSerializer(serializers.ModelSerializer):
         )
 
 
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = (
+            'description',
+        )
+
+
+
+
 class ClassRoomSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer()
     ostad = MasterSerializer()
+    answers = AnswerSerializer(many=True)
 
     class Meta:
         model = ClassRoom
@@ -35,6 +46,8 @@ class ClassRoomSerializer(serializers.ModelSerializer):
             'ostad', 'lesson','answers',
             'slug', 'deadline', 'day'
         )
+
+
 
        
 
@@ -84,17 +97,8 @@ class CreateAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = (
-            'description', 'image',
+            'description',
         )
-
-
-        def create(self, validated_data):
-            answer = Answer.objects.create(
-                description=validated_data['description'],
-                image=validated_data['image'],
-            )
-
-            return answer
 
 
 

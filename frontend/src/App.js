@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import ClassDetail from "./components/ClassDetail";
 import CreateClass from "./components/CreateClass";
 import CreateMaster from "./components/CreateMaster";
+import ClassAnswer from "./components/ClassAnswer";
 
 class App extends Component {
 	constructor(props) {
@@ -46,6 +47,7 @@ class App extends Component {
 				<Route path="/create-class" component={CreateClass} />
 				<Route path="/create-master" component={CreateMaster} />
 				<Route path="/class/:code" component={ClassDetail} />
+				<Route path="/class/:code/answer/" component={ClassAnswer} />
 				<Footer />
 			</Router>
 		);

@@ -110,10 +110,10 @@ class CreateAnswerView(APIView):
         if serializer.is_valid():
             # code = request.GET.get(self.loohup_url_kwarg)
             room = get_object_or_404(ClassRoom, code=code)
-            image = request.data['image']
+            # image = request.data['image']
             description = serializer.data.get('description')
             answer = Answer.objects.create(
-                image=image,
+                # image=image,
                 description=description,
                 question=room
             )
@@ -123,6 +123,7 @@ class CreateAnswerView(APIView):
 
             return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
         else:
+            print("problem")
             return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
 
 class CreateLessonView(APIView):
