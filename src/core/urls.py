@@ -15,6 +15,7 @@ urlpatterns = [
     path('class/<code>/', views.DetailClassRoomView.as_view()),
     path('class/<code>/answer/', views.CreateAnswerView.as_view()),
     path('create-class/', views.CreateClassRoomView.as_view()),
+    path('users/', views.ManageUserView.as_view()),
 ]
 
 

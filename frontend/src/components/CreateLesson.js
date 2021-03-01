@@ -10,7 +10,7 @@ export default class CreateMaster extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			masters: [],
+			lessons: [],
 			name: "",
 		};
 
@@ -24,12 +24,12 @@ export default class CreateMaster extends Component {
 
 	fetchData() {
 		console.log("fetchiing");
-		var url = "http://127.0.0.1:8000/api/master";
+		var url = "http://127.0.0.1:8000/api/lesson";
 		fetch(url)
 			.then((res) => res.json())
 			.then((data) => {
 				this.setState({
-					masters: data,
+					lessons: data,
 				});
 			})
 			.catch((err) => {
@@ -62,7 +62,7 @@ export default class CreateMaster extends Component {
 
 	handelSubmit(e) {
 		e.preventDefault();
-		var url = "http://127.0.0.1:8000/api/create-master/";
+		var url = "http://127.0.0.1:8000/api/create-lesson/";
 		fetch(url, {
 			method: "POST",
 			headers: {

@@ -6,19 +6,29 @@ from django.shortcuts import (
 )
 
 # Django rest framework
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions, authentication
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, FileUploadParser, MultiPartParser, FormParser
 
 # Files
-from .models import ClassRoom, Master, Lesson, Answer
+from .models import ClassRoom, Master, Lesson, Answer, User
 from .serializers import (
     ClassRoomSerializer, DetailClassRoomSerializer,
     CreateClassRoomSerializer, MasterSerializer,
-    LessonSerializer, CreateAnswerSerializer
+    LessonSerializer, CreateAnswerSerializer, UserSerializer
 )
+class ManageUserView(generics.RetrieveUpdateAPIView):
+    """Manage the authenticate user"""
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (authentication.TokenAuthentication,)
+
+    def get_object(self):
+        """Retrieve and return authentication user"""
+        return self.request.user
+
 
 
 class ClassRoomView(generics.ListAPIView):
@@ -34,7 +44,8 @@ class LessonView(generics.ListAPIView):
     serializer_class = LessonSerializer
 
 class DetailClassRoomView(APIView):
-    serializer_class = DetailClassRoomSerializer,
+    serializer_class = DetailClassRoomSerializer
+    permission_classes = (permissions.IsAuthenticated,)
     loohup_url_kwarg = 'code'
 
     def get(self, request, code, format=None):
@@ -56,16 +67,17 @@ class DetailClassRoomView(APIView):
 
 class CreateClassRoomView(APIView):
     serializer_class = CreateClassRoomSerializer
-
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):
         parser_classes = [MultiPartParser, FormParser]
         serializer = self.serializer_class(data=request.data)
         print(serializer)
         print("request")
-        print(request.data)
-
+        print(request.user.username)
         if serializer.is_valid():
+            
+            user = request.user.username
             ostad = serializer.data.get('ostad')
             lesson = serializer.data.get('lesson')
             image = request.FILES.get('image')
@@ -81,8 +93,10 @@ class CreateClassRoomView(APIView):
             print('---lesson---')
             master_obj = Master.objects.get(name=ostad['name'])
             lesson_obj = Lesson.objects.get(name=lesson['name'])
+            user_obj = User.objects.get(username=user)
 
             room = ClassRoom.objects.create(
+                user=user_obj,
                 ostad=master_obj,
                 lesson=lesson_obj,
                 image=image,
@@ -100,8 +114,8 @@ class CreateClassRoomView(APIView):
             )
 
 class CreateAnswerView(APIView):
-
     serializer_class = CreateAnswerSerializer
+    permission_classes = (permissions.IsAuthenticated,)
     loohup_url_kwarg = 'code'
 
     def post(self, request, code, format=None):
@@ -109,25 +123,31 @@ class CreateAnswerView(APIView):
         print(serializer)
         if serializer.is_valid():
             # code = request.GET.get(self.loohup_url_kwarg)
+            user = request.user.username
             room = get_object_or_404(ClassRoom, code=code)
-            # image = request.data['image']
+            user_obj = User.objects.get(username=user)
             description = serializer.data.get('description')
-            answer = Answer.objects.create(
-                # image=image,
-                description=description,
-                question=room
-            )
-            answer.save()
-            room.answers.add(answer)
-            room.save()
 
-            return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
+            if user_obj in room.user_answer.all() or room.answers.all():
+                return Response({"message": "you already answer to this room"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                answer = Answer.objects.create(
+                    username=user_obj,
+                    description=description,
+                    question=room
+                )
+                answer.save()
+                room.answers.add(answer)
+                room.save()
+
+                return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
         else:
             print("problem")
             return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
 
 class CreateLessonView(APIView):
     serializer_class = LessonSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None):
         queryset = Lesson.objects.all()
@@ -150,6 +170,7 @@ class CreateLessonView(APIView):
 
 class CreateMasterView(APIView):
     serializer_class = MasterSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None):
         queryset = Master.objects.all()
