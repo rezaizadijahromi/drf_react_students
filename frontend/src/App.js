@@ -15,6 +15,10 @@ import CreateClass from "./components/CreateClass";
 import CreateMaster from "./components/CreateMaster";
 import CreateLesson from "./components/CreateLesson";
 import ClassAnswer from "./components/ClassAnswer";
+import Navbar from "./components/Navbar";
+import Login from "./components/Login";
+import Logout from "./components/Logout";
+import Register from "./components/Register";
 
 class App extends Component {
 	constructor(props) {
@@ -43,9 +47,12 @@ class App extends Component {
 	render() {
 		return (
 			<Router>
-				<NavR />
+				<Navbar />
 				<Route path="/" component={ClassRoom} exact />
 				<Route path="/create-class" component={CreateClass} />
+				<Route path="/register" component={Register} />
+				<Route path="/login" component={Login} />
+				<Route path="/logout" component={Logout} />
 				<Route path="/create-master" component={CreateMaster} />
 				<Route path="/create-lesson" component={CreateLesson} />
 				<Route path="/class/:code" component={ClassDetail} />
