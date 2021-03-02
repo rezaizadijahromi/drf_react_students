@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 
+from users.models import User
 
-from .models import (ClassRoom, Lesson, Master, Answer, User)
+
+from .models import (ClassRoom, Lesson, Master, Answer)
 
 
 
@@ -15,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('email' , 'password', 'username', 'is_active', 'is_staff')
+        fields = ('email' , 'password', 'user_name', 'first_name', 'is_active', 'is_staff')
         extra_kwargs = {
             'password':{
                 'min_length':5
@@ -104,7 +106,7 @@ class CreateClassRoomSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer()
     ostad = MasterSerializer()
     # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
-    user = UserSerializer(many=False, required=False)
+    # user = UserSerializer(many=False, required=False)
 
     class Meta:
         model = ClassRoom
@@ -122,14 +124,13 @@ class CreateClassRoomSerializer(serializers.ModelSerializer):
         read_only_fields = ('code', 'user')
 
 class CreateAnswerSerializer(serializers.ModelSerializer):
-    username = UserSerializer(many=False, required=False)
+    # username = UserSerializer(many=False, required=False)
 
     class Meta:
         model = Answer
         fields = (
-            'description', 'username'
+            'description',
         )
-        read_only_fields = ('username',)
 
 
 

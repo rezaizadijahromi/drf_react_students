@@ -13,7 +13,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, FileUploadParser, MultiPartParser, FormParser
 
 # Files
-from .models import ClassRoom, Master, Lesson, Answer, User
+from .models import ClassRoom, Master, Lesson, Answer
+from users.models import User
 from .serializers import (
     ClassRoomSerializer, DetailClassRoomSerializer,
     CreateClassRoomSerializer, MasterSerializer,
@@ -74,10 +75,10 @@ class CreateClassRoomView(APIView):
         serializer = self.serializer_class(data=request.data)
         print(serializer)
         print("request")
-        print(request.user.username)
+        print(request.user.email)
         if serializer.is_valid():
             
-            user = request.user.username
+            user = request.user.email
             ostad = serializer.data.get('ostad')
             lesson = serializer.data.get('lesson')
             image = request.FILES.get('image')
@@ -93,7 +94,7 @@ class CreateClassRoomView(APIView):
             print('---lesson---')
             master_obj = Master.objects.get(name=ostad['name'])
             lesson_obj = Lesson.objects.get(name=lesson['name'])
-            user_obj = User.objects.get(username=user)
+            user_obj = User.objects.get(email=user)
 
             room = ClassRoom.objects.create(
                 user=user_obj,
@@ -123,15 +124,16 @@ class CreateAnswerView(APIView):
         print(serializer)
         if serializer.is_valid():
             # code = request.GET.get(self.loohup_url_kwarg)
-            user = request.user.username
+            user = request.user.email
             room = get_object_or_404(ClassRoom, code=code)
-            user_obj = User.objects.get(username=user)
+            user_obj = User.objects.get(email=user)
             description = serializer.data.get('description')
 
             if user_obj in room.user_answer.all() or room.answers.all():
                 return Response({"message": "you already answer to this room"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 answer = Answer.objects.create(
+                    # image=image,
                     username=user_obj,
                     description=description,
                     question=room
@@ -140,7 +142,7 @@ class CreateAnswerView(APIView):
                 room.answers.add(answer)
                 room.save()
 
-                return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
+            return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
         else:
             print("problem")
             return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
