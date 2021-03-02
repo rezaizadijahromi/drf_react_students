@@ -12,33 +12,26 @@ class StringSerializer(serializers.StringRelatedField):
     def to_internal_value(self, value):
         return value
 
+
+
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for the users object"""
+    email = serializers.EmailField(required=True)
+    user_name = serializers.CharField(required=True)
+    password = serializers.CharField(min_length=8, write_only=True)
 
     class Meta:
-        model = get_user_model()
-        fields = ('email' , 'password', 'user_name', 'first_name', 'is_active', 'is_staff')
-        extra_kwargs = {
-            'password':{
-                'min_length':5
-            }
-        }
-        read_only_fields = ('email', 'password', 'username', 'is_active', 'is_staff')
+        model = User
+        fields = ('email', 'user_name', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        """Create a new user with encrypted password and return it """
-        return get_user_model().objects.create_user(**validated_data)
-
-    def update(self, instance, validated_data):
-        """Update a user setting the password correctly and return it"""
         password = validated_data.pop('password', None)
-        user = super().update(instance, validated_data)
-
-        if password:
-            user.set_password(password)
-            user.save()
-
-        return user
+        # as long as the fields are the same, we can just use this
+        instance = self.Meta.model(**validated_data)
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
 
 
 class LessonSerializer(serializers.ModelSerializer):
