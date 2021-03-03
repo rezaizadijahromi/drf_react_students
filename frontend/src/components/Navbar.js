@@ -53,7 +53,7 @@ function Navbar() {
 							href="#"
 							className={classes.link}
 							component={NavLink}
-							to="/register"
+							to="/create"
 						>
 							Register
 						</Link>

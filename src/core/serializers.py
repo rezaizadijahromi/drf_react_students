@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from users.models import User
+# from users.models import User
+from django.contrib.auth.models import User
+
 
 
 from .models import (ClassRoom, Lesson, Master, Answer)
@@ -14,35 +16,40 @@ class StringSerializer(serializers.StringRelatedField):
 
 
 
+
+
 class UserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True)
-    user_name = serializers.CharField(required=True)
-    password = serializers.CharField(min_length=8, write_only=True)
+    name = serializers.SerializerMethodField(read_only=True)
+    _id = serializers.SerializerMethodField(read_only=True)
+    isAdmin = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'user_name', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin']
 
-    # def create(self, validated_data):
-    #     password = validated_data.pop('password', None)
-    #     # as long as the fields are the same, we can just use this
-    #     instance = self.Meta.model(**validated_data)
-    #     if password is not None:
-    #         instance.set_password(password)
-    #     instance.save()
-    #     return instance
+    def get__id(self, obj):
+        return obj.id
 
+    def get_isAdmin(self, obj):
+        return obj.is_staff
+
+    def get_name(self, obj):
+        name = obj.first_name
+        if name == '':
+            name = obj.email
+
+        return name
 class UserSerializerWithToken(UserSerializer):
-    token = serializers.SerializerMethodField()
+    token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'user_name', 'first_name', 'is_staff', 'is_active', 'token']
+        fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin', 'token']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
+
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -174,3 +181,23 @@ class CreateAnswerSerializer(serializers.ModelSerializer):
     #     return room
 
     
+# class UserSerializerWithToken(UserSerializer):
+#     token = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'first_name', 'is_staff', 'is_active', 'token']
+
+#     def get_token(self, obj):
+#         token = RefreshToken.for_user(obj)
+#         return str(token.access_token)
+
+# class UserSerializer(serializers.ModelSerializer):
+#     email = serializers.EmailField(required=True)
+#     user_name = serializers.CharField(required=True)
+#     password = serializers.CharField(min_length=8, write_only=True)
+
+#     class Meta:
+#         model = User
+#         fields = ('email', 'user_name', 'password')
+#         extra_kwargs = {'password': {'write_only': True}}

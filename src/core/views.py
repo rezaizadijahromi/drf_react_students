@@ -14,7 +14,9 @@ from rest_framework.parsers import JSONParser, FileUploadParser, MultiPartParser
 
 # Files
 from .models import ClassRoom, Master, Lesson, Answer
-from users.models import User
+# from users.models import User
+from django.contrib.auth.models import User
+
 from .serializers import (
     ClassRoomSerializer, DetailClassRoomSerializer,
     CreateClassRoomSerializer, MasterSerializer,

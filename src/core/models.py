@@ -12,7 +12,9 @@ from django.contrib.auth.models import (
 from django.core.exceptions import ValidationError
 
 from django.conf import settings
-from users.models import User
+# from users.models import User
+from django.contrib.auth.models import User
+
 
 def generate_unique_code():
     length = 6

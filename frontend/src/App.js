@@ -50,7 +50,7 @@ class App extends Component {
 				<Navbar />
 				<Route path="/" component={ClassRoom} exact />
 				<Route path="/create-class" component={CreateClass} />
-				<Route path="/register" component={Register} />
+				<Route path="/create" component={Register} />
 				<Route path="/login" component={Login} />
 				<Route path="/logout" component={Logout} />
 				<Route path="/create-master" component={CreateMaster} />
