@@ -24,7 +24,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticate user"""
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = (authentication.TokenAuthentication,)
+    authentication_classes = (authentication.TokenAuthentication,)
 
     def get_object(self):
         """Retrieve and return authentication user"""
@@ -33,19 +33,27 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 
 
 class ClassRoomView(generics.ListAPIView):
-    queryset = ClassRoom.objects.all()
+    
+    # authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ClassRoomSerializer
+    queryset = ClassRoom.objects.all()
 
 class MasterView(generics.ListAPIView):
     queryset = Master.objects.all()
+    # authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = MasterSerializer
 
 class LessonView(generics.ListAPIView):
     queryset = Lesson.objects.all()
+    # authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = LessonSerializer
 
 class DetailClassRoomView(APIView):
     serializer_class = DetailClassRoomSerializer
+    # authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
     loohup_url_kwarg = 'code'
 
@@ -64,10 +72,9 @@ class DetailClassRoomView(APIView):
                 {'message':'Invalid class'}, status=status.HTTP_400_BAD_REQUEST
             )
 
-
-
 class CreateClassRoomView(APIView):
     serializer_class = CreateClassRoomSerializer
+    # authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):

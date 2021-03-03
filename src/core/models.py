@@ -12,6 +12,7 @@ from django.contrib.auth.models import (
 from django.core.exceptions import ValidationError
 
 from django.conf import settings
+from users.models import User
 
 def generate_unique_code():
     length = 6
@@ -24,7 +25,7 @@ def generate_unique_code():
 
 
 class ClassRoom(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
     image = models.ImageField(
         blank=True, null=True,
@@ -40,7 +41,7 @@ class ClassRoom(models.Model):
     )
 
     user_answer = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,related_name="user_answer",
+        User,related_name="user_answer",
         blank=True
     )
     day = models.IntegerField(default=0)
@@ -78,13 +79,13 @@ class Master(models.Model):
         return self.name
 
 class Answer(models.Model):
-    username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,  blank=True, null=True)
+    username = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True, null=True)
     description = models.TextField()
     image = models.ImageField(blank=True, null=True,
         upload_to="answers/")
     question = models.ForeignKey('ClassRoom', on_delete=models.CASCADE)
     liked = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='liked',
+        User, related_name='liked',
         blank=True
     )
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
-
+from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 
@@ -24,14 +24,25 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('email', 'user_name', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        # as long as the fields are the same, we can just use this
-        instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
+    # def create(self, validated_data):
+    #     password = validated_data.pop('password', None)
+    #     # as long as the fields are the same, we can just use this
+    #     instance = self.Meta.model(**validated_data)
+    #     if password is not None:
+    #         instance.set_password(password)
+    #     instance.save()
+    #     return instance
+
+class UserSerializerWithToken(UserSerializer):
+    token = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'user_name', 'first_name', 'is_staff', 'is_active', 'token']
+
+    def get_token(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -61,7 +72,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer()
     ostad = MasterSerializer()
     answers = AnswerSerializer(many=True)
-    user = UserSerializer(many=False)
+    user = UserSerializerWithToken(many=False)
 
     class Meta:
         model = ClassRoom

@@ -1,34 +1,42 @@
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.serializers import UserSerializer
+from core.serializers import UserSerializer, UserSerializerWithToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
+from django.contrib.auth.hashers import make_password
 
 
-class CustomUserCreate(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request, format='json'):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            if user:
-                json = serializer.data
-                return Response(json, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        serializer = UserSerializerWithToken(self.user).data
+        for k, v in serializer.items():
+            data[k] = v
+
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+class RegisterUser(APIView):
+    def post(self, request, format=None):
+        user = User.objects.create_user(
+            first_name=request.data['first_name'],
+            user_name=request.data['user_name'],
+            email=request.data['email'],
+            password=make_password(request.data['password'])
+        )
+
+        serializer = UserSerializerWithToken(user, many=False)
+        return Response(serializer.data)
+        # except:
+        #     message = {'detail': 'User with this email already exists'}
+        #     return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BlacklistTokenUpdateView(APIView):
-    permission_classes = [AllowAny]
-    authentication_classes = ()
-
-    def post(self, request):
-        try:
-            refresh_token = request.data["refresh_token"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
