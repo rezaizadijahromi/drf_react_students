@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
 	const history = useHistory();
 	const initialFormData = Object.freeze({
-		email: '',
+		username: '',
 		password: '',
 	});
 
@@ -56,17 +56,17 @@ export default function Login() {
 
 		axiosInstance
 			.post(`user/login/`, {
-				email: formData.email,
+				username: formData.username,
 				password: formData.password,
 			})
 			.then((res) => {
-				localStorage.setItem('token', res.data.access);
-				// localStorage.setItem('refresh_token', res.data.refresh);
+				localStorage.setItem('access_token', res.data.access);
+				localStorage.setItem('refresh_token', res.data.refresh);
 				axiosInstance.defaults.headers['Authorization'] =
-					'JWT ' + localStorage.getItem('token');
+					'Bearer ' + localStorage.getItem('access_token');
 				history.push('/');
-				//console.log(res);
-				//console.log(res.data);
+				console.log(res);
+				console.log(res.data);
 			});
 	};
 
@@ -86,10 +86,10 @@ export default function Login() {
 						margin="normal"
 						required
 						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
+						id="username"
+						label="Username"
+						name="username"
+						autoComplete="username"
 						autoFocus
 						onChange={handleChange}
 					/>

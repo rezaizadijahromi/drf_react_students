@@ -37,9 +37,10 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 class ClassRoomView(generics.ListAPIView):
     
     # authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAdminUser,)
     serializer_class = ClassRoomSerializer
     queryset = ClassRoom.objects.all()
+    
 
 class MasterView(generics.ListAPIView):
     queryset = Master.objects.all()
@@ -84,10 +85,10 @@ class CreateClassRoomView(APIView):
         serializer = self.serializer_class(data=request.data)
         print(serializer)
         print("request")
-        print(request.user.email)
+        print(request.user.username)
         if serializer.is_valid():
             
-            user = request.user.email
+            user = request.user.username
             ostad = serializer.data.get('ostad')
             lesson = serializer.data.get('lesson')
             image = request.FILES.get('image')
@@ -98,12 +99,12 @@ class CreateClassRoomView(APIView):
             print('---lesson---')
             print(lesson)
             print(ostad)
-            print(image)
+            print(user)
             print('---lesson---')
             print('---lesson---')
             master_obj = Master.objects.get(name=ostad['name'])
             lesson_obj = Lesson.objects.get(name=lesson['name'])
-            user_obj = User.objects.get(email=user)
+            user_obj = User.objects.get(username=user)
 
             room = ClassRoom.objects.create(
                 user=user_obj,
@@ -166,7 +167,10 @@ class CreateLessonView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
+
         serializer = self.serializer_class(data=request.data)
+        print(serializer)
+        print(request.data)
         if serializer.is_valid():
 
             lesson = Lesson.objects.create(

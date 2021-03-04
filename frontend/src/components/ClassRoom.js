@@ -1,4 +1,5 @@
 import React, { componentDidMount, Component } from "react";
+import axiosInstance from '../axios';
 
 import {
 	BrowserRouter as Router,
@@ -30,11 +31,13 @@ class ClassRoom extends Component {
 			
 		};
 
-		this.fetchData = this.fetchData.bind(this);
+		// this.fetchData = this.fetchData.bind(this);
+		this.fetchDataAxios = this.fetchDataAxios.bind(this);
 	}
 
 	componentDidMount() {
-		this.fetchData();
+		this.fetchDataAxios()
+		// this.fetchData();
 	}
 
 	getCookie(name) {
@@ -53,21 +56,30 @@ class ClassRoom extends Component {
 		return cookieValue;
 	}
 
-
-	fetchData() {
-        console.log("fetchiing")
-		var url = "http://127.0.0.1:8000/api/";
-		fetch(url)
-			.then((res) => res.json())
-			.then((data) => {
-				this.setState({
-					products: data,
-				});
-			}).catch(err => {
-          // Do something for an error here
-          console.log("Error Reading data " + err);
-        })
+	fetchDataAxios(){
+		axiosInstance.get().then((res) =>{
+			console.log("Axios",res.data);
+			this.setState({
+				products: res.data,
+			});
+		})
 	}
+
+
+	// fetchData() {
+    //     console.log("fetchiing")
+	// 	var url = "http://127.0.0.1:8000/api/";
+	// 	fetch(url)
+	// 		.then((res) => res.json())
+	// 		.then((data) => {
+	// 			this.setState({
+	// 				products: data,
+	// 			});
+	// 		}).catch(err => {
+    //       // Do something for an error here
+    //       console.log("Error Reading data " + err);
+    //     })
+	// }
 
 	render() {
 		console.log(this.state.lesson);
