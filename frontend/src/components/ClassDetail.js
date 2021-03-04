@@ -1,4 +1,5 @@
 import React from "react";
+import axiosInstance from "../axios";
 
 import ReactBootstrap from "react-bootstrap";
 import {
@@ -23,7 +24,8 @@ class ClassDetail extends React.Component {
 			image: "",
 		};
 		this.code = this.props.match.params.code;
-		this.getClassDetails();
+		this.getClassDetailsAxios();
+		// this.getClassDetails();
 	}
 
 	getCookie(name) {
@@ -41,32 +43,23 @@ class ClassDetail extends React.Component {
 		}
 		return cookieValue;
 	}
-	
 
-	getClassDetails() {
-		var csrftoken = this.getCookie('csrftoken')
-		return fetch("http://127.0.0.1:8000/api/class/" +  this.code, {
-			headers : { 
-				'Content-Type': 'application/json',
-				'Accept': 'application/json',
-				"X-CSRFToken": csrftoken,
-			   }
-		})
+	getClassDetailsAxios() {
+		axiosInstance
+			.get("class/" + this.code)
 			.then((res) => {
-				return res.json();
-			})
-			.then((data) => {
+				console.log(res.data);
 				this.setState({
-					ostad: data.ostad.name,
-					lessonName: data.lesson.name,
-					day: data.day,
-					image: data.image,
+					ostad: res.data.ostad.name,
+					lessonName: res.data.lesson.name,
+					day: res.data.day,
+					image: res.data.image,
 				});
-			}).catch(err => {
-				// Do something for an error here
-				console.log("Error Reading data " + err);
-			  })
+			})
+			
 	}
+
+	
 
 	render() {
 		return (
@@ -81,7 +74,7 @@ class ClassDetail extends React.Component {
 					/>
 					<Card.Title>{this.state.lessonName}</Card.Title>
 					<Card.Title>{this.state.ostad}</Card.Title>
-                    <Card.Title>{this.state.day}</Card.Title>
+					<Card.Title>{this.state.day}</Card.Title>
 				</Card>
 			</div>
 		);
@@ -89,3 +82,34 @@ class ClassDetail extends React.Component {
 }
 
 export default ClassDetail;
+
+
+
+
+
+
+// getClassDetails() {
+	// 	var csrftoken = this.getCookie("csrftoken");
+	// 	return fetch("http://127.0.0.1:8000/api/class/" + this.code, {
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 			Accept: "application/json",
+	// 			"X-CSRFToken": csrftoken,
+	// 		},
+	// 	})
+	// 		.then((res) => {
+	// 			return res.json();
+	// 		})
+	// 		.then((data) => {
+	// 			this.setState({
+	// 				ostad: data.ostad.name,
+	// 				lessonName: data.lesson.name,
+	// 				day: data.day,
+	// 				image: data.image,
+	// 			});
+	// 		})
+	// 		.catch((err) => {
+	// 			// Do something for an error here
+	// 			console.log("Error Reading data " + err);
+	// 		});
+	// }

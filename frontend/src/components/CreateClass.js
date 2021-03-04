@@ -1,18 +1,19 @@
-import React, { Component } from "react";
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from "axios";
-import {
-	BrowserRouter as Router,
-	Route,
-	Link,
-	Redirect,
-} from "react-router-dom";
-
+import axiosInstance from "../axios";
 import ReactBootstrap from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+// import {
+// 	BrowserRouter as Router,
+// 	Route,
+// 	Link,
+// 	Redirect,
+// } from "react-router-dom";
 
-class CreateClass extends Component {
+class CreateClass extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -45,71 +46,46 @@ class CreateClass extends Component {
 		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handelLesson = this.handelLesson.bind(this);
 		this.handelOstad = this.handelOstad.bind(this);
-		this.getMaster = this.getMaster.bind(this);
-		this.getLesson = this.getLesson.bind(this);
-		this.fetchData = this.fetchData.bind(this);
-		this.handelRoomButtonPressed = this.handelRoomButtonPressed.bind(this);
+		this.handelChange = this.handelChange.bind(this);
+		this.getMasterAxios = this.getMasterAxios.bind(this);
+		this.getLessonAxios = this.getLessonAxios.bind(this);
+		this.fetchDataAxios = this.fetchDataAxios.bind(this);
+		this.handelSubmitAxios = this.handelSubmitAxios.bind(this)
+		// this.handelRoomButtonPressed = this.handelRoomButtonPressed.bind(this);
 		// this.handelRoomButtonPressedAXIOS = this.handelRoomButtonPressedAXIOS.bind(
 		// 	this
 		// );
 	}
 
 	componentDidMount() {
-		this.getMaster();
-		this.getLesson();
-		this.fetchData();
+		this.getMasterAxios();
+		this.getLessonAxios();
+		this.fetchDataAxios();
 	}
 
-	getMaster() {
-		fetch("http://127.0.0.1:8000/api/master/")
-			.then((res) => res.json())
-			.then((data) => {
-				this.setState({
-					master: data,
-				});
+	getMasterAxios() {
+		axiosInstance.get("/master/").then((res) => {
+			this.setState({
+				master: res.data,
 			});
+		});
 	}
 
-	getLesson() {
-		fetch("http://127.0.0.1:8000/api/lesson/")
-			.then((res) => res.json())
-			.then((data) => {
-				this.setState({
-					lesson: data,
-				});
+	getLessonAxios() {
+		axiosInstance.get("/lesson/").then((res) => {
+			this.setState({
+				lesson: res.data,
 			});
+		});
 	}
 
-	fetchData() {
-		console.log("fetchiing");
-		var url = "http://127.0.0.1:8000/api/";
-		fetch(url)
-			.then((res) => res.json())
-			.then((data) => {
-				this.setState({
-					items: data,
-				});
-			})
-			.catch((err) => {
-				// Do something for an error here
-				console.log("Error Reading data " + err);
+	fetchDataAxios() {
+		axiosInstance.get().then((res) => {
+			console.log("Axios", res.data);
+			this.setState({
+				item: res.data,
 			});
-	}
-
-	getCookie(name) {
-		var cookieValue = null;
-		if (document.cookie && document.cookie !== "") {
-			var cookies = document.cookie.split(";");
-			for (var i = 0; i < cookies.length; i++) {
-				var cookie = cookies[i].trim();
-				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === name + "=") {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
+		});
 	}
 
 	handelOstad(e) {
@@ -150,61 +126,59 @@ class CreateClass extends Component {
 		});
 	}
 
-	handelRoomButtonPressed(e) {
-		console.log("item", this.state.products);
-		e.preventDefault();
-		let data = new FormData()
-		data.append("image", this.state.products.image);
-		console.log("image", data);
+	// const initialFormData = Object.freeze({
+	// 	master: '',
+	// 	lesson: '',
+	// 	day: '',
+	// 	// content: '',
+	// });
 
-		var url = "http://127.0.0.1:8000/api/create-class/";
-		try {
-			fetch(url, {
-				method: "POST",
-				headers: {
-					"Content-type": "application/json",
+	handelChange(e) {
+		if ([e.target.name] == "image") {
+			this.setState({
+				products: {
+					...this.state.products,
+					image: e.target.files,
 				},
-				body: JSON.stringify({
-					lesson: {
-						name: this.state.products.lesson,
-					},
-					ostad: {
-						name: this.state.products.master,
-					},
-					day: this.state.products.day,
-				}),
-			})
-				.then((res) => {
-					res.json();
-					this.fetchData();
-				})
-				.then((data) => console.log(data));
-		} catch (error) {
-			console.log("catch");
+			});
+		}
+		if ([e.target.name] == "title") {
+			this.setState({
+				...this.state.products,
+				[e.target.name]: e.target.value.trim(),
+			});
+		} else {
+			this.setState({
+				...this.state.products,
+				[e.target.name]: e.target.value.trim(),
+			});
 		}
 	}
 
-	// handelRoomButtonPressedAXIOS(e) {
-	// 	console.log("item", this.state.products);
-	// 	e.preventDefault();
-	// 	const config = { headers: { "Content-Type": "multipart/form-data" } };
-	// 	const url = "http://127.0.0.1:8000/api/create-class/";
-	// 	let data = new FormData();
-	// 	data.append(ostad:{name}, this.state.products.master.name);
-	// 	data.append("lesson", this.state.products.lesson.name);
-	// 	data.append("image", this.state.products.image);
-	// 	data.append("day", this.state.products.day);
+	
 
-	// 	console.log(data);
-	// 	axios.post(url, data, config).then((res) => {
-	// 		console.log(res.data);
-	// 	});
-	// }
+
+	handelSubmitAxios(e) {
+		e.preventDefault();
+		let formData = new FormData();
+		formData.append("master", this.state.products.master);
+		formData.append("lesson", this.state.products.lesson);
+		formData.append("day", this.state.products.day);
+		formData.append("image", this.state.products.image);
+		axiosInstance.post(`create-class/`, formData);
+		this.props.history.push({
+			pathname: "/",
+		});
+		window.location.reload();
+	}
+
+
 
 	render() {
 		// console.log("pros", this.state.products);
+		
 		return (
-			<Form onSubmit={this.handelRoomButtonPressed}>
+			<Form onSubmit={this.handelSubmitAxios}>
 				<Form.Group>
 					<Form.Label>Ostad</Form.Label>
 
@@ -248,7 +222,7 @@ class CreateClass extends Component {
 						onChange={this.handelDay}
 						value={this.state.products.day}
 					/>
-					<Button onSubmit={this.handelRoomButtonPressed} type="submit">
+					<Button onSubmit={this.handelSubmitAxios} type="submit">
 						submit
 					</Button>
 				</Form.Group>
@@ -323,3 +297,73 @@ export default CreateClass;
 // 		},
 // 	});
 // }
+
+// getMaster() {
+// 	fetch("http://127.0.0.1:8000/api/master/")
+// 		.then((res) => res.json())
+// 		.then((data) => {
+// 			this.setState({
+// 				master: data,
+// 			});
+// 		});
+// }
+// getLesson() {
+// 	fetch("http://127.0.0.1:8000/api/lesson/")
+// 		.then((res) => res.json())
+// 		.then((data) => {
+// 			this.setState({
+// 				lesson: data,
+// 			});
+// 		});
+// }
+
+	// handelRoomButtonPressed(e) {
+	// 	console.log("item", this.state.products);
+	// 	e.preventDefault();
+	// 	let data = new FormData();
+	// 	data.append("image", this.state.products.image);
+	// 	console.log("image", data);
+
+	// 	var url = "http://127.0.0.1:8000/api/create-class/";
+	// 	try {
+	// 		fetch(url, {
+	// 			method: "POST",
+	// 			headers: {
+	// 				"Content-type": "application/json",
+	// 			},
+	// 			body: JSON.stringify({
+	// 				lesson: {
+	// 					name: this.state.products.lesson,
+	// 				},
+	// 				ostad: {
+	// 					name: this.state.products.master,
+	// 				},
+	// 				day: this.state.products.day,
+	// 			}),
+	// 		})
+	// 			.then((res) => {
+	// 				res.json();
+	// 				this.fetchDataAxios();
+	// 			})
+	// 			.then((data) => console.log(data));
+	// 	} catch (error) {
+	// 		console.log("catch");
+	// 	}
+	// }
+
+	// handelRoomButtonPressedAXIOS(e) {
+	// 	console.log("item", this.state.products);
+	// 	e.preventDefault();
+	// 	const config = { headers: { "Content-Type": "multipart/form-data" } };
+	// 	const url = "http://127.0.0.1:8000/api/create-class/";
+	// 	let data = new FormData();
+	// 	data.append(ostad:{name}, this.state.products.master.name);
+	// 	data.append("lesson", this.state.products.lesson.name);
+	// 	data.append("image", this.state.products.image);
+	// 	data.append("day", this.state.products.day);
+
+	// 	console.log(data);
+	// 	axios.post(url, data, config).then((res) => {
+	// 		console.log(res.data);
+	// 	});
+	// }

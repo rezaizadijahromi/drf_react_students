@@ -85,44 +85,46 @@ class CreateClassRoomView(APIView):
         serializer = self.serializer_class(data=request.data)
         print(serializer)
         print("request")
+        print(request.data['lesson'])
         print(request.user.username)
-        if serializer.is_valid():
+        # if serializer.is_valid():
             
-            user = request.user.username
-            ostad = serializer.data.get('ostad')
-            lesson = serializer.data.get('lesson')
-            image = request.FILES.get('image')
-            day = serializer.data.get('day')
+        user = request.user.username
+        ostad = request.data.get('master')
+        lesson = request.data.get('lesson')
+        image = request.FILES.get('image')
+        day = request.data.get('day')
 
 
-            print('---lesson---')
-            print('---lesson---')
-            print(lesson)
-            print(ostad)
-            print(user)
-            print('---lesson---')
-            print('---lesson---')
-            master_obj = Master.objects.get(name=ostad['name'])
-            lesson_obj = Lesson.objects.get(name=lesson['name'])
-            user_obj = User.objects.get(username=user)
+        print('---lesson---')
+        print('---lesson---')
+        print(lesson)
+        print(image)
+        print(user)
+        print('---lesson---')
+        print('---lesson---')
+        master_obj = Master.objects.get(name=ostad)
+        lesson_obj = Lesson.objects.get(name=lesson)
+        user_obj = User.objects.get(username=user)
 
-            room = ClassRoom.objects.create(
-                user=user_obj,
-                ostad=master_obj,
-                lesson=lesson_obj,
-                image=image,
-                day=day
-            )
-            room.save()
-            return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
-        else:
-            print("Problem")
-            return Response(
-                {
-                    'message': "This is problem"
-                },
-                status=status.HTTP_404_NOT_FOUND
-            )
+        room = ClassRoom.objects.create(
+            user=user_obj,
+            ostad=master_obj,
+            lesson=lesson_obj,
+            image=image,
+            day=day
+        )
+        room.save()
+        return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
+        # if serializer.is_valid():
+        # else:
+        #     print(serializer.errors)
+        #     return Response(
+        #         {
+        #             'message': "This is problem"
+        #         },
+        #         status=status.HTTP_404_NOT_FOUND
+        #     )
 
 class CreateAnswerView(APIView):
     serializer_class = CreateAnswerSerializer
