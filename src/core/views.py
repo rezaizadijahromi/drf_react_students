@@ -37,7 +37,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 class ClassRoomView(generics.ListAPIView):
     
     # authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ClassRoomSerializer
     queryset = ClassRoom.objects.all()
     
