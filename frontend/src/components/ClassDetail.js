@@ -48,7 +48,6 @@ class ClassDetail extends React.Component {
 		axiosInstance
 			.get("class/" + this.code)
 			.then((res) => {
-				console.log(res.data);
 				this.setState({
 					ostad: res.data.ostad.name,
 					lessonName: res.data.lesson.name,

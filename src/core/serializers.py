@@ -72,6 +72,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = (
             'description',
+            'image'
         )
 
 class ClassRoomSerializer(serializers.ModelSerializer):

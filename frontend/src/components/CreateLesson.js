@@ -7,7 +7,7 @@ import { Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default class CreateMaster extends Component {
+export default class CreateLesson extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -17,8 +17,6 @@ export default class CreateMaster extends Component {
 
 		this.handelSubmitAxios = this.handelSubmitAxios.bind(this);
 		this.handelName = this.handelName.bind(this);
-		// this.handelSubmit = this.handelSubmit.bind(this);
-		// this.fetchDataAxios = this.fetchDataAxios.bind();
 	}
 
 

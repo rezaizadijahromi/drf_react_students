@@ -135,23 +135,28 @@ class CreateAnswerView(APIView):
         serializer = self.serializer_class(data=request.data)
         print(serializer)
         if serializer.is_valid():
-            # code = request.GET.get(self.loohup_url_kwarg)
-            user = request.user.email
+            user = request.user.username
             room = get_object_or_404(ClassRoom, code=code)
-            user_obj = User.objects.get(email=user)
+            image = request.FILES.get('image')
+            user_obj = User.objects.get(username=user)
+            print("---user---")
+            print(user_obj)
+            print("---user---")
             description = serializer.data.get('description')
 
-            if user_obj in room.user_answer.all() or room.answers.all():
+            if user_obj in room.user_answer.all():
+                print("already answer")
                 return Response({"message": "you already answer to this room"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 answer = Answer.objects.create(
-                    # image=image,
+                    image=image,
                     username=user_obj,
                     description=description,
                     question=room
                 )
                 answer.save()
                 room.answers.add(answer)
+                room.user_answer.add(user_obj)
                 room.save()
 
             return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)

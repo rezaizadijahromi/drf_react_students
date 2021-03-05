@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axiosInstance from "../axios";
 import { render } from "react-dom";
 
 import ReactBootstrap from "react-bootstrap";
@@ -6,94 +7,128 @@ import { Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import axios from "axios";
+
 export default class ClassAnswer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			description: "",
-			items: [],
-		};
+			answers: {
+				description: "",
+				image: null
+			}
 
+
+		};
 		this.code = this.props.match.params.code;
 
+		this.handelSubmitAxios = this.handelSubmitAxios.bind(this);
 		this.handelDescription = this.handelDescription.bind(this);
-		this.fetchData = this.fetchData.bind(this);
-		this.handelSubmit = this.handelSubmit.bind(this);
-	}
-
-	componentDidMount() {
-		console.log("here");
-		this.fetchData();
-	}
-
-	fetchData() {
-		console.log("fetchiing");
-		var url = `http://127.0.0.1:8000/api/class/${this.code}`;
-		fetch(url)
-			.then((res) => res.json())
-			.then((data) => {
-				this.setState({
-					items: data,
-				});
-			})
-			.catch((err) => {
-				// Do something for an error here
-				console.log("Error Reading data " + err);
-			});
-	}
-
-	getCookie(name) {
-		var cookieValue = null;
-		if (document.cookie && document.cookie !== "") {
-			var cookies = document.cookie.split(";");
-			for (var i = 0; i < cookies.length; i++) {
-				var cookie = cookies[i].trim();
-				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === name + "=") {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
+		this.handleImage = this.handleImage.bind(this);
 	}
 
 	handelDescription(e) {
 		this.setState({
-			description: e.target.value,
+			answers: {
+				...this.state.answers,
+				description: e.target.value,
+			}
 		});
 	}
 
-	handelSubmit(e) {
-		e.preventDefault();
-		var url = `http://127.0.0.1:8000/api/class/${this.code}/answer/`;
-		fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-type": "application/json",
-			},
-			body: JSON.stringify({
-				description: this.state.description,
-			}),
-		}).then((res) => {
-			res.json();
-			this.fetchData();
+	handleImage(e) {
+		this.setState({
+			answers: {
+				...this.state.answers,
+				image: e.target.files[0],
+			}
 		});
 	}
+
+	handelSubmitAxios(e) {
+		e.preventDefault();
+		let formData = new FormData();
+		formData.append("description", this.state.answers.description);
+		formData.append("image", this.state.answers.image);
+		axiosInstance.post(`/class/${this.code}/answer/`, formData);
+		console.log("done");
+		// this.props.history.push({
+		// 	pathname: `/`,
+		// });
+		// window.location.reload();
+	}
+
+	
+
+	
 
 	render() {
 		return (
-			<div>
-				<Form onSubmit={this.handelSubmit}>
+				<Form onSubmit={this.handelSubmitAxios}>
 					<Form.Group>
 						<Form.Label>Name</Form.Label>
 						<Form.Control
 							onChange={this.handelDescription}
-							value={this.state.description}
+							value={this.state.answers.description}
 						></Form.Control>
 					</Form.Group>
+					<br />
+				<Form.Group>
+					<input type="file" name="image" onChange={this.handleImage} />
+				</Form.Group>
+
+				<br />
+
+				<Button onSubmit={this.handelSubmitAxios} type="submit">
+						submit
+					</Button>
 				</Form>
-			</div>
 		);
 	}
 }
+
+// fetchData() {
+// 	console.log("fetchiing");
+// 	var url = `http://127.0.0.1:8000/api/class/${this.code}`;
+// 	fetch(url)
+// 		.then((res) => res.json())
+// 		.then((data) => {
+// 			this.setState({
+// 				items: data,
+// 			});
+// 		})
+// 		.catch((err) => {
+// 			// Do something for an error here
+// 			console.log("Error Reading data " + err);
+// 		});
+// }
+
+// handelSubmit(e) {
+	// 	e.preventDefault();
+	// 	var url = `http://127.0.0.1:8000/api/class/${this.code}/answer/`;
+	// 	fetch(url, {
+	// 		method: "POST",
+	// 		headers: {
+	// 			"Content-type": "application/json",
+	// 		},
+	// 		body: JSON.stringify({
+	// 			description: this.state.description,
+	// 		}),
+	// 	}).then((res) => {
+	// 		res.json();
+	// 		this.fetchData();
+	// 	});
+	// }
+
+		// componentDidMount() {
+	// 	console.log("here");
+	// 	this.fetchDataAxios();
+	// }
+
+	// fetchDataAxios() {
+	// 	axiosInstance.get(`/class/${this.code}`).then((res) => {
+	// 		this.setState({
+	// 			items: res.data,
+	// 		});
+	// 	});
+	// }
