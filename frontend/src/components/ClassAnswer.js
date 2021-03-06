@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import axiosInstance from "../axios";
 import { render } from "react-dom";
-
-import ReactBootstrap from "react-bootstrap";
-import { Form } from "react-bootstrap";
-import { Button } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 import axios from "axios";
 
@@ -15,10 +17,8 @@ export default class ClassAnswer extends Component {
 		this.state = {
 			answers: {
 				description: "",
-				image: null
-			}
-
-
+				image: null,
+			},
 		};
 		this.code = this.props.match.params.code;
 
@@ -32,7 +32,7 @@ export default class ClassAnswer extends Component {
 			answers: {
 				...this.state.answers,
 				description: e.target.value,
-			}
+			},
 		});
 	}
 
@@ -41,7 +41,7 @@ export default class ClassAnswer extends Component {
 			answers: {
 				...this.state.answers,
 				image: e.target.files[0],
-			}
+			},
 		});
 	}
 
@@ -52,37 +52,53 @@ export default class ClassAnswer extends Component {
 		formData.append("image", this.state.answers.image);
 		axiosInstance.post(`/class/${this.code}/answer/`, formData);
 		console.log("done");
-		// this.props.history.push({
-		// 	pathname: `/`,
-		// });
-		// window.location.reload();
+		this.props.history.push({
+			pathname: `/class/${this.code}`,
+		});
+		window.location.reload();
 	}
-
-	
-
-	
 
 	render() {
 		return (
-				<Form onSubmit={this.handelSubmitAxios}>
-					<Form.Group>
-						<Form.Label>Name</Form.Label>
-						<Form.Control
+			<Grid container spacing={1} align="center">
+				<Grid item xs={12}>
+					<FormControl component="fieldset" xs={12}>
+						<TextField
+							id="filled-full-width"
 							onChange={this.handelDescription}
 							value={this.state.answers.description}
-						></Form.Control>
-					</Form.Group>
-					<br />
-				<Form.Group>
-					<input type="file" name="image" onChange={this.handleImage} />
-				</Form.Group>
+							style={{ margin: 8 }}
+							placeholder="Title"
+							fullWidth
+							margin="normal"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							variant="filled"
+						/>
+						<br />
+						<Button variant="contained" component="label">
+							Upload File
+							<input
+								type="file"
+								hidden
+								name="image"
+								onChange={this.handleImage}
+							/>
+						</Button>
+					</FormControl>
+				</Grid>
 
-				<br />
-
-				<Button onSubmit={this.handelSubmitAxios} type="submit">
-						submit
+				<Grid item xs={12}>
+					<Button
+						color="primary"
+						variant="contained"
+						onClick={this.handelSubmitAxios}
+					>
+						Submit your answer
 					</Button>
-				</Form>
+				</Grid>
+			</Grid>
 		);
 	}
 }
@@ -104,31 +120,31 @@ export default class ClassAnswer extends Component {
 // }
 
 // handelSubmit(e) {
-	// 	e.preventDefault();
-	// 	var url = `http://127.0.0.1:8000/api/class/${this.code}/answer/`;
-	// 	fetch(url, {
-	// 		method: "POST",
-	// 		headers: {
-	// 			"Content-type": "application/json",
-	// 		},
-	// 		body: JSON.stringify({
-	// 			description: this.state.description,
-	// 		}),
-	// 	}).then((res) => {
-	// 		res.json();
-	// 		this.fetchData();
-	// 	});
-	// }
+// 	e.preventDefault();
+// 	var url = `http://127.0.0.1:8000/api/class/${this.code}/answer/`;
+// 	fetch(url, {
+// 		method: "POST",
+// 		headers: {
+// 			"Content-type": "application/json",
+// 		},
+// 		body: JSON.stringify({
+// 			description: this.state.description,
+// 		}),
+// 	}).then((res) => {
+// 		res.json();
+// 		this.fetchData();
+// 	});
+// }
 
-		// componentDidMount() {
-	// 	console.log("here");
-	// 	this.fetchDataAxios();
-	// }
+// componentDidMount() {
+// 	console.log("here");
+// 	this.fetchDataAxios();
+// }
 
-	// fetchDataAxios() {
-	// 	axiosInstance.get(`/class/${this.code}`).then((res) => {
-	// 		this.setState({
-	// 			items: res.data,
-	// 		});
-	// 	});
-	// }
+// fetchDataAxios() {
+// 	axiosInstance.get(`/class/${this.code}`).then((res) => {
+// 		this.setState({
+// 			items: res.data,
+// 		});
+// 	});
+// }

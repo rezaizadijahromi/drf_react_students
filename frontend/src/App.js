@@ -23,16 +23,10 @@ import Register from "./components/Register";
 class App extends Component {
 	constructor(props) {
 		super(props);
-		this.setState({
-
-		})
+		this.setState({});
 	}
 
-	componentDidMount() {
-
-	}
-
-
+	componentDidMount() {}
 
 	render() {
 		return (
@@ -47,6 +41,7 @@ class App extends Component {
 				<Route path="/create-lesson" component={CreateLesson} />
 				<Route path="/class/:code" component={ClassDetail} />
 				<Route path="/class/:code/answer/" component={ClassAnswer} />
+
 				<Footer />
 			</Router>
 		);

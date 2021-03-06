@@ -76,11 +76,11 @@ class ClassDetail extends React.Component {
 								/>
 								<CardContent>
 									<Typography gutterBottom variant="h5" component="h2">
-										{this.code}
+										Question code: {this.code}
 									</Typography>
-									<Typography>{this.state.lessonName}</Typography>
-									<Typography>{this.state.ostad}</Typography>
-									<Typography>{this.state.day}</Typography>
+									<Typography>Lesson: {this.state.lessonName}</Typography>
+									<Typography>Master: {this.state.ostad}</Typography>
+									<Typography>Days left to answer: {this.state.day}</Typography>
 								</CardContent>
 								<CardActions>
 									<Link
