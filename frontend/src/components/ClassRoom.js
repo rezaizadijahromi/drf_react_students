@@ -1,18 +1,19 @@
 import React, { componentDidMount, Component } from "react";
-import axiosInstance from '../axios';
-
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-	Link,
-	Redirect,
-} from "react-router-dom";
-
-import ReactBootstrap from "react-bootstrap";
-import { CardDeck, Card, CardGroup, CardColumns, Container, Row, Col } from "react-bootstrap";
-import { Button } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import axiosInstance from "../axios";
+import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
+import CameraIcon from "@material-ui/icons/PhotoCamera";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Grid from "@material-ui/core/Grid";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import Link from "@material-ui/core/Link";
 
 class ClassRoom extends Component {
 	constructor(props) {
@@ -21,14 +22,12 @@ class ClassRoom extends Component {
 			products: [
 				{
 					code: null,
-					lesson: '',
+					lesson: "",
 					ostad: "",
 					day: 1,
-                    image: "",
+					image: "",
 				},
-				
 			],
-			
 		};
 
 		// this.fetchData = this.fetchData.bind(this);
@@ -36,100 +35,72 @@ class ClassRoom extends Component {
 	}
 
 	componentDidMount() {
-		this.fetchDataAxios()
+		this.fetchDataAxios();
 		// this.fetchData();
 	}
-
-	getCookie(name) {
-		var cookieValue = null;
-		if (document.cookie && document.cookie !== "") {
-			var cookies = document.cookie.split(";");
-			for (var i = 0; i < cookies.length; i++) {
-				var cookie = cookies[i].trim();
-				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === name + "=") {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
-	}
-
-	fetchDataAxios(){
-		axiosInstance.get().then((res) =>{
-			console.log("Axios",res.data);
+	fetchDataAxios() {
+		axiosInstance.get().then((res) => {
+			console.log("Axios", res.data);
 			this.setState({
 				products: res.data,
 			});
-		})
+		});
 	}
 
-
-	// fetchData() {
-    //     console.log("fetchiing")
-	// 	var url = "http://127.0.0.1:8000/api/";
-	// 	fetch(url)
-	// 		.then((res) => res.json())
-	// 		.then((data) => {
-	// 			this.setState({
-	// 				products: data,
-	// 			});
-	// 		}).catch(err => {
-    //       // Do something for an error here
-    //       console.log("Error Reading data " + err);
-    //     })
-	// }
-
 	render() {
-		console.log(this.state.lesson);
-
-		var pro = this.state.products
+		var pro = this.state.products;
 
 		return (
-            <Container>
-                <Row xs={6} sm={3} md={8}>
-                        {pro.map(function(product, index){
-
-                            return(
-                                <Card key={index} style={{ width: '18rem', top:"5rem", bottom:"100rem" }}>
-                                    <Col xs={12} md={8}>
-                                <Card.Img variant="top" src={product.image}  width={141}
-    height={150}  />
-                                </Col>
-                                <Card.Body>
-                                <Card.Title>{product.code}</Card.Title>
-                                <Card.Title>{product.lesson.name}</Card.Title>
-                                <Card.Text>
-                                    {product.ostad.name}
-                                </Card.Text>
-								<Link to={`class/${product.code}`}>
-										<Button >go to class</Button>
-								</Link>
-                                </Card.Body>
-                            </Card>
-                            )
-                            
-                        })}
-
-                </Row>
-            </Container>
+			<React.Fragment>
+				<main>
+					<Container maxWidth="md">
+						{/* End hero unit */}
+						<Grid container spacing={4}>
+							{pro.map((product, index) => (
+								<Grid item key={index} xs={12} sm={6} md={4}>
+									<Card
+										// className={{
+										// 	height: "80%",
+										// 	display: "flex",
+										// 	flexDirection: "column",
+										// }}
+										spacing={8}
+									>
+										<CardMedia
+											// className={{
+											// 	paddingTop: "56.25%",
+											// }}
+											component="img"
+											src={product.image}
+										></CardMedia>
+										<CardContent>
+											<Typography gutterBottom variant="h5" component="h2">
+												{product.code}
+											</Typography>
+											<Typography>{product.lesson.name}</Typography>
+											<Typography>{product.ostad.name}</Typography>
+										</CardContent>
+										<CardActions>
+											<Link
+												href={`class/${product.code}`}
+												component={Button}
+												underline="none"
+												color="textPrimary"
+											>
+												Go to class
+											</Link>
+											<Button size="small" color="primary">
+												request
+											</Button>
+										</CardActions>
+									</Card>
+								</Grid>
+							))}
+						</Grid>
+					</Container>
+				</main>
+			</React.Fragment>
 		);
 	}
 }
-
-
 export default ClassRoom;
-
-// <Grid container spacing={2}>
-// 	{this.state.products.map(function (product, index) {
-// 		return (
-// 			<Grid item xs={12} key={product.code}>
-// 				<Typography>{product.code}</Typography>
-
-// 				<Box component="span" m={1}>
-// 				</Box>
-// 			</Grid>
-// 		);
-// 	})}
-// </Grid>

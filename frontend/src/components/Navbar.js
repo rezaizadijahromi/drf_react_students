@@ -1,12 +1,12 @@
-import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { makeStyles } from '@material-ui/core/styles';
-import { NavLink } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { makeStyles } from "@material-ui/core/styles";
+import { NavLink } from "react-router-dom";
+import Link from "@material-ui/core/Link";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -47,6 +47,43 @@ function Navbar() {
 							RIJ
 						</Link>
 					</Typography>
+
+					<nav>
+						<Link
+							color="textPrimary"
+							href="#"
+							className={classes.link}
+							component={NavLink}
+							to="/create-master"
+						>
+							Create master
+						</Link>
+					</nav>
+
+					<nav>
+						<Link
+							color="textPrimary"
+							href="#"
+							className={classes.link}
+							component={NavLink}
+							to="/create-lesson"
+						>
+							Create lesson
+						</Link>
+					</nav>
+
+					<nav>
+						<Link
+							color="textPrimary"
+							href="/create-class"
+							className={classes.link}
+							component={NavLink}
+							to="/create-class"
+						>
+							Create Room
+						</Link>
+					</nav>
+
 					<nav>
 						<Link
 							color="textPrimary"
@@ -56,18 +93,6 @@ function Navbar() {
 							to="/create"
 						>
 							Register
-						</Link>
-					</nav>
-
-                    <nav>
-						<Link
-							color="textPrimary"
-							href="/create-class"
-							className={classes.link}
-							component={NavLink}
-							to="/create-class"
-						>
-							Create Room
 						</Link>
 					</nav>
 					<Button
