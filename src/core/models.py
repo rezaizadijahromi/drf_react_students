@@ -10,6 +10,7 @@ from django.contrib.auth.models import (
     PermissionsMixin
 )
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 
 from django.conf import settings
 # from users.models import User
@@ -90,7 +91,12 @@ class Answer(models.Model):
         User, related_name='liked',
         blank=True
     )
+    slug = models.SlugField(blank=True, null=True)
 
     def __str__(self):
         return self.description
 
+    def save(self,*args, **kwargs):
+        if not self.slug and self.description:
+            self.slug = slugify(self.description)
+        super(Answer,self).save(*args, **kwargs)

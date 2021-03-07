@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 from .serializers import (
     ClassRoomSerializer, DetailClassRoomSerializer,
     CreateClassRoomSerializer, MasterSerializer,
-    LessonSerializer, CreateAnswerSerializer, UserSerializer
+    LessonSerializer, CreateAnswerSerializer, UserSerializer,AnswerSerializer
 )
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticate user"""
@@ -213,6 +213,22 @@ class CreateMasterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({'message': 'there is an error'}, status=status.HTTP_404_NOT_FOUND)
+
+class AnswerDetail(APIView):
+    serializer_class = AnswerSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, code, slug):
+        class_room = get_object_or_404(ClassRoom, code=code)
+        answer = Answer.objects.get(
+            question=class_room,
+            slug=slug
+        )
+
+        return Response(AnswerSerializer(answer).data, status=status.HTTP_200_OK)
+    
+
+
 
 
 # class CreateClassRoomView(generics.CreateAPIView):

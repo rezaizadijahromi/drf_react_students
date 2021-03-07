@@ -25,6 +25,19 @@ export default class ClassAnswer extends Component {
 		this.handelSubmitAxios = this.handelSubmitAxios.bind(this);
 		this.handelDescription = this.handelDescription.bind(this);
 		this.handleImage = this.handleImage.bind(this);
+		this.getAnswers = this.getAnswers.bind(this)
+	}
+
+	componentDidMount() {
+		this.getAnswers()
+	}
+
+	getAnswers(){
+		axiosInstance.get(`/class/${this.code}/answer/`).then((res) =>{
+			this.setState({
+				answers: res.data
+			})
+		})
 	}
 
 	handelDescription(e) {

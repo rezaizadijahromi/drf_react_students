@@ -35,6 +35,7 @@ class ClassDetail extends React.Component {
 				{
 					description: "",
 					image: null,
+					slug: "",
 				},
 			],
 			ostad: "",
@@ -47,8 +48,12 @@ class ClassDetail extends React.Component {
 		// this.getClassDetails();
 	}
 
+	componentDidMount() {
+		this.getClassDetailsAxios();
+	}
+
 	getClassDetailsAxios() {
-		axiosInstance.get("class/" + this.code).then((res) => {
+		axiosInstance.get("class/" + this.code + "/").then((res) => {
 			this.setState({
 				ostad: res.data.ostad.name,
 				lessonName: res.data.lesson.name,
@@ -56,18 +61,19 @@ class ClassDetail extends React.Component {
 				image: res.data.image,
 				answers: res.data.answers,
 			});
-			console.log(res.data.answers);
+			// console.log(res.data.answers);
 		});
 	}
 
 	render() {
 		var answers = this.state.answers;
+		var code = this.code
 		return (
 			<div>
 				<Container>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<Card spacing={8}>
+					<Grid container>
+						<Grid item={true} xs={12}>
+							<Card>
 								<CardMedia
 									component="img"
 									src={`http://127.0.0.1:8000${this.state.image}`}
@@ -85,9 +91,9 @@ class ClassDetail extends React.Component {
 								<CardActions>
 									<Link
 										color="textPrimary"
-										href={`${this.code}/answer`}
+										href={`${this.code}/answer/`}
 										component={Link}
-										to="/answer"
+										// to="/answer"
 									>
 										Answer here
 									</Link>
@@ -96,25 +102,32 @@ class ClassDetail extends React.Component {
 						</Grid>
 					</Grid>
 
-					<Grid container spacing={2}>
+					<Grid container>
 						{answers.map(function (ans, index) {
 							return (
-								<Grid
-									item
-									key={index}
-									xs={12}
-									sm={6}
-									md={3}
-									spacing={3}
-									style={{ height: "100%", width: "100%", padding: 20 }}
-								>
-									<Typography>{ans.description}</Typography>
-									<CardMedia
-										component="img"
-										src={`http://127.0.0.1:8000${ans.image}`}
-										style={{ height: 250, width: 250, padding: 20, borderRadius: "50%", objectFit: "cover" }}
-									></CardMedia>
-								</Grid>
+								<Link href={`${code}/answer/${ans.slug}/`}  component={Link}>
+									<Grid
+										item
+										key={index}
+										xs={12}
+										sm={6}
+										md={3}
+										style={{ height: "100%", width: "100%", padding: 20 }}
+									>
+										<Typography>{ans.description}</Typography>
+										<CardMedia
+											component="img"
+											src={`http://127.0.0.1:8000${ans.image}`}
+											style={{
+												height: 250,
+												width: 250,
+												padding: 20,
+												borderRadius: "50%",
+												objectFit: "cover",
+											}}
+										></CardMedia>
+									</Grid>
+								</Link>
 							);
 						})}
 					</Grid>

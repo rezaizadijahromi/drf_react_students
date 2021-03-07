@@ -19,6 +19,7 @@ import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Register from "./components/Register";
+import Answer from "./components/Answer";
 
 class App extends Component {
 	constructor(props) {
@@ -32,6 +33,7 @@ class App extends Component {
 		return (
 			<Router>
 				<Navbar />
+				<Switch>
 				<Route path="/" component={ClassRoom} exact />
 				<Route path="/create-class" component={CreateClass} />
 				<Route path="/create" component={Register} />
@@ -39,9 +41,11 @@ class App extends Component {
 				<Route path="/logout" component={Logout} />
 				<Route path="/create-master" component={CreateMaster} />
 				<Route path="/create-lesson" component={CreateLesson} />
-				<Route path="/class/:code" component={ClassDetail} />
-				<Route path="/class/:code/answer/" component={ClassAnswer} />
 
+				<Route path="/class/:code" exact component={ClassDetail} />
+				<Route path="/class/:code/answer/" exact component={ClassAnswer} />
+				<Route path="/class/:code/answer/:slug/" exact component={Answer} />
+				</Switch>
 				<Footer />
 			</Router>
 		);
