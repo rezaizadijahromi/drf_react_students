@@ -8,6 +8,21 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Container from "@material-ui/core/Container";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+// import Link from "@material-ui/core/Link";
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link,
+	Redirect,
+} from "react-router-dom";
+
+
 
 import axios from "axios";
 
@@ -15,6 +30,7 @@ export default class ClassAnswer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			questionImage: null,
 			answers: {
 				description: "",
 				image: null,
@@ -25,7 +41,7 @@ export default class ClassAnswer extends Component {
 		this.handelSubmitAxios = this.handelSubmitAxios.bind(this);
 		this.handelDescription = this.handelDescription.bind(this);
 		this.handleImage = this.handleImage.bind(this);
-		this.getAnswers = this.getAnswers.bind(this)
+		// this.getAnswers = this.getAnswers.bind(this)
 	}
 
 	componentDidMount() {
@@ -33,10 +49,11 @@ export default class ClassAnswer extends Component {
 	}
 
 	getAnswers(){
-		axiosInstance.get(`/class/${this.code}/answer/`).then((res) =>{
+		axiosInstance.get(`/class/${this.code}/`).then((res) =>{
 			this.setState({
-				answers: res.data
+				questionImage: res.data.image
 			})
+			console.log(res.data);
 		})
 	}
 
@@ -73,6 +90,29 @@ export default class ClassAnswer extends Component {
 
 	render() {
 		return (
+			<div>
+			<Container>
+			<Grid container>
+						<Grid item={true} xs={12}>
+							<Card>
+								<CardMedia
+									component="img"
+									src={`http://127.0.0.1:8000${this.state.questionImage}`}
+									width={30}
+									height={600}
+								/>
+								<CardContent>
+									<Typography gutterBottom variant="h5" component="h2">
+										Question code: {this.code}
+									</Typography>
+									
+								</CardContent>
+								
+							</Card>
+						</Grid>
+					</Grid>
+
+			</Container>
 			<Grid container spacing={1} align="center">
 				<Grid item xs={12}>
 					<FormControl component="fieldset" xs={12}>
@@ -112,6 +152,7 @@ export default class ClassAnswer extends Component {
 					</Button>
 				</Grid>
 			</Grid>
+			</div>
 		);
 	}
 }

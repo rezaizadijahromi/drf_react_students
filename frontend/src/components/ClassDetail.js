@@ -24,8 +24,16 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
+// import Link from "@material-ui/core/Link";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link,
+	Redirect,
+	NavLink,
+} from "react-router-dom";
 
 class ClassDetail extends React.Component {
 	constructor(props) {
@@ -67,7 +75,7 @@ class ClassDetail extends React.Component {
 
 	render() {
 		var answers = this.state.answers;
-		var code = this.code
+		var code = this.code;
 		return (
 			<div>
 				<Container>
@@ -89,14 +97,16 @@ class ClassDetail extends React.Component {
 									<Typography>Days left to answer: {this.state.day}</Typography>
 								</CardContent>
 								<CardActions>
-									<Link
+									{/* <Link
 										color="textPrimary"
-										href={`${this.code}/answer/`}
-										component={Link}
+										// href={`${this.code}/answer/`}
+										// component={Link}
 										// to="/answer"
 									>
 										Answer here
-									</Link>
+									</Link> */}
+
+									<NavLink to={`${this.code}/answer/`}>Answer here</NavLink>
 								</CardActions>
 							</Card>
 						</Grid>
@@ -105,7 +115,7 @@ class ClassDetail extends React.Component {
 					<Grid container>
 						{answers.map(function (ans, index) {
 							return (
-								<Link href={`${code}/answer/${ans.slug}/`}  component={Link}>
+								<NavLink to={`${code}/answer/${ans.slug}/`}>
 									<Grid
 										item
 										key={index}
@@ -127,7 +137,7 @@ class ClassDetail extends React.Component {
 											}}
 										></CardMedia>
 									</Grid>
-								</Link>
+								</NavLink>
 							);
 						})}
 					</Grid>

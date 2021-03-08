@@ -13,8 +13,16 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
+// import Link from "@material-ui/core/Link";
 
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link,
+	Redirect,
+	NavLink,
+} from "react-router-dom";
 class ClassRoom extends Component {
 	constructor(props) {
 		super(props);
@@ -81,14 +89,11 @@ class ClassRoom extends Component {
 											<Typography>{product.ostad.name}</Typography>
 										</CardContent>
 										<CardActions>
-											<Link
-												href={`class/${product.code}`}
-												component={Button}
-												underline="none"
-												color="textPrimary"
+											<NavLink
+												to={`class/${product.code}`}
 											>
 												Go to class
-											</Link>
+											</NavLink>
 											<Button size="small" color="primary">
 												request
 											</Button>
