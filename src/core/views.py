@@ -227,7 +227,22 @@ class AnswerDetail(APIView):
 
         return Response(AnswerSerializer(answer).data, status=status.HTTP_200_OK)
     
+class LikeView(APIView):
+    serializer_class = AnswerSerializer
+    permission_classes = (permissions.IsAuthenticated, )
 
+    def get(self, request, slug, format=None):
+        tweet_qs = Answer.objects.filter(slug=slug)
+        message = "Not allowed"
+        if request.user.is_authenticated:
+            is_liked = Answer.objects.toggle_like(request.user, tweet_qs.first())
+            return Response({"liked":is_liked})
+        return Response({"message": message}, status=400)
+
+    # def post(self, request, slug):
+    #     answer = Answer.objects.filter(slug=slug)
+    #     is_liked = Answer.objects.toggle_like(request.user.username, answer[0])
+    #     return Response()
 
 
 

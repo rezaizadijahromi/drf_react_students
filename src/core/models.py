@@ -81,6 +81,19 @@ class Master(models.Model):
     def __str__(self):
         return self.name
 
+class AnswerManager(models.Manager):
+    def toggle_like(self, user, answer_obj):
+        if user in answer_obj.liked.all():
+            is_liked = False
+            answer_obj.liked.remove(user)
+        else:
+            is_liked = True
+            answer_obj.liked.add(user)
+
+        return is_liked
+
+
+
 class Answer(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True, null=True)
     description = models.TextField()
@@ -92,6 +105,9 @@ class Answer(models.Model):
         blank=True
     )
     slug = models.SlugField(blank=True, null=True)
+
+    objects = AnswerManager()
+
 
     def __str__(self):
         return self.description

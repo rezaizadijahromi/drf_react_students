@@ -68,12 +68,30 @@ class MasterSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
+    did_like = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+
+
     class Meta:
         model = Answer
         fields = (
             'description',
-            'image', "slug",
+            'image', "slug", "likes", 'did_like',
         )
+
+    def get_did_like(self, obj):
+        request = self.context.get("request")
+        try:
+            user = request.user
+            if user.is_authenticated:
+                if user in obj.liked.all():
+                    return True
+        except:
+            pass
+        return False
+
+    def get_likes(self, obj):
+        return obj.liked.all().count()
 
 class ClassRoomSerializer(serializers.ModelSerializer):
     
