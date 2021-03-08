@@ -3,7 +3,7 @@ from django.db.models.signals import post_save, pre_save
 
 import string
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, 
@@ -51,6 +51,14 @@ class ClassRoom(models.Model):
     date = models.DateTimeField(default=datetime.today)
     deadline = models.DateTimeField(default=datetime.today)
 
+    def get_time_left(self):
+        left_time = (self.deadline - datetime.now(timezone.utc)).days
+        if left_time > 0:
+            return left_time
+        else:
+            return " Your time for answering this question is over"
+
+
 
     def __str__(self):
         return str(self.code)
@@ -59,11 +67,12 @@ class ClassRoom(models.Model):
 def pre_save_slug_ref_code(sender, instance, *args, **kwargs):
     # if not created:
     instance.slug = instance.code
-    if not instance.code:
-        day = instance.day
+    if instance.code:
+        day = int(instance.day)
         time = timedelta(days=day)
         deadline = instance.date + time
         instance.deadline = deadline
+        print("running")
         
 
 pre_save.connect(pre_save_slug_ref_code, sender=ClassRoom)

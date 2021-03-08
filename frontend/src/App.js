@@ -7,6 +7,9 @@ import {
 	Redirect,
 } from "react-router-dom";
 
+import { Provider as Alertprovider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
+
 import ClassRoom from "./components/ClassRoom";
 import NavR from "./components/NavR";
 import Footer from "./components/Footer";
@@ -30,24 +33,31 @@ class App extends Component {
 	componentDidMount() {}
 
 	render() {
-		return (
-			<Router>
-				<Navbar />
-				<Switch>
-				<Route path="/" component={ClassRoom} exact />
-				<Route path="/create-class" component={CreateClass} />
-				<Route path="/create" component={Register} />
-				<Route path="/login" component={Login} />
-				<Route path="/logout" component={Logout} />
-				<Route path="/create-master" component={CreateMaster} />
-				<Route path="/create-lesson" component={CreateLesson} />
+		const alertOption = {
+			timeout: 3000,
+			position: "top center",
+		};
 
-				<Route path="/class/:code" exact component={ClassDetail} />
-				<Route path="/class/:code/answer/" exact component={ClassAnswer} />
-				<Route path="/class/:code/answer/:slug/" exact component={Answer} />
-				</Switch>
-				<Footer />
-			</Router>
+		return (
+			<Alertprovider template={AlertTemplate} {...alertOption}>
+				<Router>
+					<Navbar />
+					<Switch>
+						<Route path="/" component={ClassRoom} exact />
+						<Route path="/create-class" component={CreateClass} />
+						<Route path="/create" component={Register} />
+						<Route path="/login" component={Login} />
+						<Route path="/logout" component={Logout} />
+						<Route path="/create-master" component={CreateMaster} />
+						<Route path="/create-lesson" component={CreateLesson} />
+
+						<Route path="/class/:code" exact component={ClassDetail} />
+						<Route path="/class/:code/answer/" exact component={ClassAnswer} />
+						<Route path="/class/:code/answer/:slug/" exact component={Answer} />
+					</Switch>
+					<Footer />
+				</Router>
+			</Alertprovider>
 		);
 	}
 }

@@ -68,29 +68,26 @@ class MasterSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    did_like = serializers.SerializerMethodField()
-    likes = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Answer
         fields = (
             'description',
-            'image', "slug", "likes", 'did_like',
+            'image', "slug", "liked",
         )
 
-    def get_did_like(self, obj):
-        request = self.context.get("request")
-        try:
-            user = request.user
-            if user.is_authenticated:
-                if user in obj.liked.all():
-                    return True
-        except:
-            pass
-        return False
+    # def get_did_like(self, obj):
+    #     request = self.context.get("request")
+    #     print(request.user)
+    #     if user.is_authenticated:
+    #         if user in obj.liked.all():
+    #             return True
+        
+    #     return False
 
-    def get_likes(self, obj):
+    def get_liked(self, obj):
         return obj.liked.all().count()
 
 class ClassRoomSerializer(serializers.ModelSerializer):
@@ -99,6 +96,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     ostad = MasterSerializer()
     answers = AnswerSerializer(many=True)
     user = UserSerializerWithToken(many=False)
+    deadline = serializers.SerializerMethodField()
 
     class Meta:
         model = ClassRoom
@@ -109,6 +107,9 @@ class ClassRoomSerializer(serializers.ModelSerializer):
             'slug', 'deadline', 'day'
         )
         read_only_fields = ('user',)
+
+    def get_deadline(self, obj):
+        return obj.get_time_left()
        
 
 class DetailClassRoomSerializer(serializers.ModelSerializer):
@@ -116,6 +117,8 @@ class DetailClassRoomSerializer(serializers.ModelSerializer):
     ostad = MasterSerializer()
     user = UserSerializer(many=False)
     answers = AnswerSerializer(many=True)
+    deadline = serializers.SerializerMethodField()
+
 
     # ostad = serializers.PrimaryKeyRelatedField(queryset=Master.objects.all(), required=True)
     # lesson = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all(), required=True)
@@ -130,6 +133,9 @@ class DetailClassRoomSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ('user',)
+
+    def get_deadline(self, obj):
+        return obj.get_time_left()
 
 
 class CreateClassRoomSerializer(serializers.ModelSerializer):

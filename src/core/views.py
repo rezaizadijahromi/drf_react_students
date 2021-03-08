@@ -4,6 +4,7 @@ from django.shortcuts import (
     render, redirect,
     get_object_or_404
 )
+from datetime import datetime, timezone
 
 # Django rest framework
 from rest_framework import generics, status, permissions, authentication
@@ -116,15 +117,6 @@ class CreateClassRoomView(APIView):
         )
         room.save()
         return Response(CreateClassRoomSerializer(room).data, status=status.HTTP_201_CREATED)
-        # if serializer.is_valid():
-        # else:
-        #     print(serializer.errors)
-        #     return Response(
-        #         {
-        #             'message': "This is problem"
-        #         },
-        #         status=status.HTTP_404_NOT_FOUND
-        #     )
 
 class CreateAnswerView(APIView):
     serializer_class = CreateAnswerSerializer
@@ -133,33 +125,36 @@ class CreateAnswerView(APIView):
 
     def post(self, request, code, format=None):
         serializer = self.serializer_class(data=request.data)
+        room = get_object_or_404(ClassRoom, code=code)
+        left_time = (room.deadline - datetime.now(timezone.utc)).days
         print(serializer)
         if serializer.is_valid():
             user = request.user.username
-            room = get_object_or_404(ClassRoom, code=code)
             image = request.FILES.get('image')
             user_obj = User.objects.get(username=user)
             print("---user---")
             print(user_obj)
             print("---user---")
             description = serializer.data.get('description')
+            if left_time > 0:
+                if user_obj in room.user_answer.all():
+                    print("already answer")
+                    return Response({"message": "you already answer to this room"}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    answer = Answer.objects.create(
+                        image=image,
+                        username=user_obj,
+                        description=description,
+                        question=room
+                    )
+                    answer.save()
+                    room.answers.add(answer)
+                    room.user_answer.add(user_obj)
+                    room.save()
 
-            if user_obj in room.user_answer.all():
-                print("already answer")
-                return Response({"message": "you already answer to this room"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
             else:
-                answer = Answer.objects.create(
-                    image=image,
-                    username=user_obj,
-                    description=description,
-                    question=room
-                )
-                answer.save()
-                room.answers.add(answer)
-                room.user_answer.add(user_obj)
-                room.save()
-
-            return Response(CreateAnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
+                return Response({"message":"the time is over"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             print("problem")
             return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
@@ -231,7 +226,7 @@ class LikeView(APIView):
     serializer_class = AnswerSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
-    def get(self, request, code, slug, format=None):
+    def post(self, request, code, slug, format=None):
         class_room = get_object_or_404(ClassRoom, code=code)
         answer_qs = Answer.objects.filter(slug=slug, question=class_room)
         message = "Not allowed"

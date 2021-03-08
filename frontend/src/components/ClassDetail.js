@@ -1,14 +1,3 @@
-// import ReactBootstrap from "react-bootstrap";
-// import {
-// 	CardDeck,
-// 	Card,
-// 	CardGroup,
-// 	CardColumns,
-// 	Container,
-// 	Row,
-// 	Col,
-// } from "react-bootstrap";
-// import { Button } from "react-bootstrap";
 import React from "react";
 import axiosInstance from "../axios";
 import AppBar from "@material-ui/core/AppBar";
@@ -44,6 +33,7 @@ class ClassDetail extends React.Component {
 					description: "",
 					image: null,
 					slug: "",
+					liked: 0,
 				},
 			],
 			ostad: "",
@@ -53,6 +43,7 @@ class ClassDetail extends React.Component {
 		};
 		this.code = this.props.match.params.code;
 		this.getClassDetailsAxios();
+		this.getLike = this.getLike.bind(this);
 		// this.getClassDetails();
 	}
 
@@ -65,17 +56,30 @@ class ClassDetail extends React.Component {
 			this.setState({
 				ostad: res.data.ostad.name,
 				lessonName: res.data.lesson.name,
-				day: res.data.day,
+				day: res.data.deadline,
 				image: res.data.image,
 				answers: res.data.answers,
 			});
-			// console.log(res.data.answers);
+			// console.log(res.data);
 		});
+	}
+	
+	
+	getLike(e, slug) {
+		e.preventDefault();
+		console.log(e);
+		axiosInstance.post(`class/${this.code}/answer-like/${slug}/`);
+		this.props.history.push({
+			pathname: `/class/${this.code}`,
+		});
+		window.location.reload();
+		console.log("Here");
 	}
 
 	render() {
 		var answers = this.state.answers;
 		var code = this.code;
+		var self = this;
 		return (
 			<div>
 				<Container>
@@ -115,15 +119,18 @@ class ClassDetail extends React.Component {
 					<Grid container>
 						{answers.map(function (ans, index) {
 							return (
-								<NavLink to={`${code}/answer/${ans.slug}/`}>
-									<Grid
-										item
-										key={index}
-										xs={12}
-										sm={6}
-										md={3}
-										style={{ height: "100%", width: "100%", padding: 20 }}
-									>
+								<Grid
+									item
+									key={index}
+									xs={12}
+									sm={6}
+									md={3}
+									style={{ height: "100%", width: "100%", padding: 20 }}
+								>
+									<Button variant="contained" color="secondary" onClick={(e) => self.getLike(e, ans.slug)} >
+										Liked: {ans.liked}
+									</Button>
+									<NavLink to={`${code}/answer/${ans.slug}/`}>
 										<Typography>{ans.description}</Typography>
 										<CardMedia
 											component="img"
@@ -136,8 +143,8 @@ class ClassDetail extends React.Component {
 												objectFit: "cover",
 											}}
 										></CardMedia>
-									</Grid>
-								</NavLink>
+									</NavLink>
+								</Grid>
 							);
 						})}
 					</Grid>
